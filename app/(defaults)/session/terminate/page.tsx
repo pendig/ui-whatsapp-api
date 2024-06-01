@@ -1,11 +1,12 @@
+import TerminateSession from '@/components/terminate-session';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-    title: 'Terminate Session',
+  title: 'Terminate Session',
 };
 
 const TerminateSessionPage = () => {
-    return <div>Terminate Session Page</div>;
+  return <TerminateSession />;
 };
 
 export default TerminateSessionPage;

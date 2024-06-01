@@ -1,11 +1,8 @@
-import { Metadata } from 'next';
+import AllSession from '@/components/all-session';
+import React from 'react';
 
-export const metadata: Metadata = {
-    title: 'Create Session',
+const AllSessionPage = () => {
+  return <AllSession isCreate />;
 };
 
-const CreateSessionPage = () => {
-    return <div>Create Session Page</div>;
-};
-
-export default CreateSessionPage;
+export default AllSessionPage;
