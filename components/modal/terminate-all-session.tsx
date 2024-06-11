@@ -2,29 +2,25 @@
 
 import { Dialog, Transition } from '@headlessui/react';
 import { useState, Fragment } from 'react';
-import IconPlus from './icon/icon-plus';
 import { useRouter } from 'next/navigation';
 
-const AddNewSession = ({ isCreate = false }) => {
-  const [modal, setModal] = useState(isCreate);
+const TerminateAllSession = ({ isShow = false }) => {
+  console.log({ isShow });
+  const [modal, setModal] = useState(isShow);
+
   const router = useRouter();
+
+  const handleSubmit = async () => {
+    console.log('Terminate All Session');
+  };
   return (
-    <div>
-      <button
-        className="btn btn-primary"
-        onClick={() => {
-          router.push('/session/create');
-        }}
-      >
-        <IconPlus className="h-6 w-6" />
-        Add New Session
-      </button>
+    <>
       <Transition appear show={modal} as={Fragment}>
         <Dialog
           as="div"
           open={modal}
           onClose={() => {
-            router.push('/session/create');
+            router.push('/session/terminate');
           }}
         >
           <Transition.Child
@@ -59,17 +55,6 @@ const AddNewSession = ({ isCreate = false }) => {
                     ></button>
                   </div>
                   <div className="p-5">
-                    <p>
-                      <form>
-                        <label htmlFor="sessionName">Session Name</label>
-                        <input
-                          id="sessionName"
-                          type="text"
-                          placeholder="Enter Session Name"
-                          className="form-input"
-                        />
-                      </form>
-                    </p>
                     <div className="mt-8 flex items-center justify-end">
                       <button
                         type="button"
@@ -82,8 +67,8 @@ const AddNewSession = ({ isCreate = false }) => {
                       </button>
                       <button
                         type="button"
-                        onClick={() => {
-                          router.push('/session');
+                        onClick={async () => {
+                          await handleSubmit();
                         }}
                         className="btn btn-primary ltr:ml-4 rtl:mr-4"
                       >
@@ -97,8 +82,8 @@ const AddNewSession = ({ isCreate = false }) => {
           </div>
         </Dialog>
       </Transition>
-    </div>
+    </>
   );
 };
 
-export default AddNewSession;
+export default TerminateAllSession;
