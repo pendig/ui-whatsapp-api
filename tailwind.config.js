@@ -15,6 +15,10 @@ module.exports = {
     './components/**/*.{js,ts,jsx,tsx}',
     './src/**/*.{js,ts,jsx,tsx}',
   ],
+  safelist: [
+    'bg-success',
+    'bg-danger',
+  ],
   darkMode: 'class',
   theme: {
     container: {

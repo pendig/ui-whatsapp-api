@@ -1,11 +1,11 @@
 'use client';
 
 import { Dialog, Transition } from '@headlessui/react';
-import { useState, Fragment } from 'react';
+import { useState, Fragment, useEffect } from 'react';
 import IconPlus from '../icon/icon-plus';
 import { useRouter } from 'next/navigation';
 import { createNewSession } from '@/actions/action';
-import axios from 'axios';
+import toast from 'react-hot-toast';
 
 const AddNewSession = ({ isCreate = false }) => {
   const [modal, setModal] = useState(isCreate);
@@ -13,14 +13,24 @@ const AddNewSession = ({ isCreate = false }) => {
 
   const router = useRouter();
 
+  useEffect(() => {
+    setTimeout(() => {
+      document.getElementById('sessionName')?.focus();
+    }, 500);
+  }, []);
+
   const handleSubmit = async () => {
+    toast.dismiss();
+    const loadingToast = toast.loading('Waiting...');
     const createNewSessionResponse = await createNewSession(sessionName);
 
     if (!createNewSessionResponse.success) {
-      alert('Failed to create a new session');
+      toast.dismiss(loadingToast);
+      toast.error('This is an error!');
       return;
     }
-
+    toast.dismiss(loadingToast);
+    toast.success('Successfully create a new session!');
     const existingSessionName = localStorage.getItem('sessionName');
     if (existingSessionName) {
       const sessionNameParsed = JSON.parse(existingSessionName);

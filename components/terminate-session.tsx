@@ -5,6 +5,9 @@ import { FadeLoader } from 'react-spinners';
 import IconTrash from './icon/icon-trash';
 import { useRouter } from 'next/navigation';
 import TerminateAllSession from './modal/terminate-all-session';
+import toast from 'react-hot-toast';
+import { terminateSession } from '@/actions/action';
+import SessionCard from './session-card';
 
 interface NoCacheImageProps {
   src: string;
@@ -54,6 +57,32 @@ const TerminateSession = ({ isShow = false }) => {
     }
   }, []);
 
+  const handleTerminate = async (sessionName: string) => {
+    toast.dismiss();
+    const loadingToast = toast.loading('Waiting...');
+    const createNewSessionResponse = await terminateSession(sessionName);
+
+    if (!createNewSessionResponse.success) {
+      toast.dismiss(loadingToast);
+      toast.error('This is an error!');
+      return;
+    }
+    toast.dismiss(loadingToast);
+    toast.success('Successfully terminate session!');
+
+    // Remove session name from local storage
+    const existingSessionName = localStorage.getItem('sessionName');
+    if (existingSessionName) {
+      const sessionNameParsed = JSON.parse(existingSessionName);
+      const uniqueSessionName = sessionNameParsed.filter((name: string) => name !== sessionName);
+      localStorage.setItem('sessionName', JSON.stringify(uniqueSessionName));
+    }
+    const stringSessions = localStorage.getItem('sessionName');
+    if (stringSessions) {
+      setSessions(JSON.parse(stringSessions));
+    }
+  };
+
   return (
     <>
       <div className="mb-5 flex justify-end">
@@ -70,25 +99,7 @@ const TerminateSession = ({ isShow = false }) => {
       <div className="grid gap-5 md:grid-cols-12">
         {sessions &&
           sessions.map((session: any, i: number) => (
-            <div className="md:col-span-4 lg:col-span-3" key={i}>
-              <div className="card aspect-square rounded-md shadow-lg">
-                <div className="flex h-full w-full items-center justify-center">
-                  <NoCacheImage
-                    src={`${
-                      process.env.NEXT_PUBLIC_API_ENDPOINT
-                    }/session/qr/${session}/image?time=${new Date().getTime()}`}
-                    alt="Deskripsi Gambar"
-                  />
-                </div>
-              </div>
-              <div className="px-3 pt-3 text-center font-bold">{session}</div>
-              <div className="my-3 flex items-center justify-center">
-                <button className="btn btn-danger btn-sm">
-                  <IconTrash className="mr-2 h-4 w-4" />
-                  Terminate
-                </button>
-              </div>
-            </div>
+            <SessionCard session={session} key={i} handleTerminate={handleTerminate} />
           ))}
       </div>
     </>
