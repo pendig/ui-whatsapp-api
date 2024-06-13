@@ -14,7 +14,6 @@ const SessionCard = ({ session, handleTerminate }: SessionCardProps) => {
 
   useEffect(() => {
     const checkStatus = async () => {
-      console.log('Checking status');
       const response = await checkSessionStatus(session);
 
       const state = response?.state;

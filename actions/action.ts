@@ -11,7 +11,6 @@ export const createNewSession = async (sessionName: string) => {
         'Content-Type': 'application/json',
       },
     });
-    console.table({ createNewSession: response.data });
     return response.data;
   } catch (error: any) {
     const errorMessage = error?.response?.data?.error || error?.message || 'An error occurred';
@@ -19,9 +18,6 @@ export const createNewSession = async (sessionName: string) => {
       success: false,
       error: errorMessage,
     };
-
-    console.table({ errorResponse });
-
     return errorResponse;
   }
 };
@@ -75,7 +71,6 @@ export const checkSessionStatus = async (sessionName: string) => {
         'Content-Type': 'application/json',
       },
     });
-    console.log({ endpoint, response });
     return response.data;
   } catch (error: any) {
     const errorMessage = error?.response?.data?.error || error?.message || 'An error occurred';
