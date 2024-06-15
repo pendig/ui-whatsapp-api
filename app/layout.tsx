@@ -4,6 +4,7 @@ import '../styles/tailwind.css';
 import { Metadata } from 'next';
 import { Nunito } from 'next/font/google';
 import { Toaster } from 'react-hot-toast';
+import SessionWrapper from '@/components/SessionWrapper';
 
 export const metadata: Metadata = {
   title: {
@@ -20,11 +21,13 @@ const nunito = Nunito({
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
-      <body className={nunito.variable}>
-        <ProviderComponent>{children}</ProviderComponent>
-        <Toaster position="top-center" />
-      </body>
-    </html>
+    <SessionWrapper>
+      <html lang="en">
+        <body className={nunito.variable}>
+          <ProviderComponent>{children}</ProviderComponent>
+          <Toaster position="top-center" />
+        </body>
+      </html>
+    </SessionWrapper>
   );
 }
