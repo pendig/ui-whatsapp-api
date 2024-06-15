@@ -6,7 +6,7 @@ import { IoLogoWhatsapp } from 'react-icons/io';
 
 interface SessionCardProps {
   session: string;
-  handleTerminate: (sessionName: string) => void;
+  handleTerminate?: (sessionName: string) => void;
 }
 
 const SessionCard = ({ session, handleTerminate }: SessionCardProps) => {
