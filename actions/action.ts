@@ -6,6 +6,8 @@ export const createNewSession = async (sessionName: string) => {
   try {
     const endpoint = `${process.env.API_ENDPOINT}/session/start/${sessionName}`;
 
+    console.table({ endpoint });
+
     const response = await axios.get(endpoint, {
       headers: {
         'Content-Type': 'application/json',
