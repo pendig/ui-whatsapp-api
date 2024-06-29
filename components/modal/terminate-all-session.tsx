@@ -15,7 +15,7 @@ const TerminateAllSession = ({ isShow = false }) => {
     const response = await terminateAllSession();
 
     if (!response.success) {
-      toast.error('This is an error!');
+      toast.error(response.error || 'This is an error!');
       return;
     }
 

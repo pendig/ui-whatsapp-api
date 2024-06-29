@@ -1,23 +1,30 @@
 'use client';
 import IconLockDots from '@/components/icon/icon-lock-dots';
 import IconMail from '@/components/icon/icon-mail';
+import { signIn } from 'next-auth/react';
 import React from 'react';
 
 const ComponentsAuthLoginForm = () => {
   const submitForm = (e: any) => {
     e.preventDefault();
+    signIn('credentials', {
+      username: e.target.username.value,
+      password: e.target.Password.value,
+      redirect: false,
+    });
   };
 
   return (
     <form className="space-y-5 dark:text-white" onSubmit={submitForm}>
       <div>
-        <label htmlFor="Email">Email</label>
+        <label htmlFor="username">Username</label>
         <div className="relative text-white-dark">
           <input
-            id="Email"
-            type="email"
-            placeholder="Enter Email"
+            id="username"
+            type="username"
+            placeholder="Enter username"
             className="form-input ps-10 placeholder:text-white-dark"
+            value="username"
           />
           <span className="absolute start-4 top-1/2 -translate-y-1/2">
             <IconMail fill={true} />
@@ -32,6 +39,7 @@ const ComponentsAuthLoginForm = () => {
             type="password"
             placeholder="Enter Password"
             className="form-input ps-10 placeholder:text-white-dark"
+            value="password"
           />
           <span className="absolute start-4 top-1/2 -translate-y-1/2">
             <IconLockDots fill={true} />

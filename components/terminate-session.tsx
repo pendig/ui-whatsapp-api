@@ -60,11 +60,11 @@ const TerminateSession = ({ isShow = false }) => {
   const handleTerminate = async (sessionName: string) => {
     toast.dismiss();
     const loadingToast = toast.loading('Waiting...');
-    const createNewSessionResponse = await terminateSession(sessionName);
+    const terminateSessionResponse = await terminateSession(sessionName);
 
-    if (!createNewSessionResponse.success) {
+    if (!terminateSessionResponse.success) {
       toast.dismiss(loadingToast);
-      toast.error('This is an error!');
+      toast.error(terminateSessionResponse?.error || 'This is an error!');
       return;
     }
     toast.dismiss(loadingToast);

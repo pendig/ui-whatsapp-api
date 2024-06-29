@@ -26,7 +26,7 @@ const AddNewSession = ({ isCreate = false }) => {
 
     if (!createNewSessionResponse.success) {
       toast.dismiss(loadingToast);
-      toast.error('This is an error!');
+      toast.error(createNewSessionResponse?.error || 'This is an error!');
       return;
     }
     toast.dismiss(loadingToast);
