@@ -118,21 +118,31 @@ const Header = () => {
                     placement={`${isRtl ? 'bottom-start' : 'bottom-end'}`}
                     btnClassName="relative group block"
                     button={
-                      <img
-                        className="h-9 w-9 rounded-full object-cover saturate-50 group-hover:saturate-100"
-                        src={session.user?.image as string}
-                        alt="userProfile"
-                      />
+                      <>
+                        {session.user?.image ? (
+                          <img
+                            className="h-9 w-9 rounded-full object-cover saturate-50 group-hover:saturate-100"
+                            src={session.user?.image as string}
+                            alt="userProfile"
+                          />
+                        ) : (
+                          <div className="w-[36px] h-[36px] bg-gray-100 rounded-full"></div>
+                        )}
+                      </>
                     }
                   >
                     <ul className="w-[230px] !py-0 font-semibold text-dark dark:text-white-dark dark:text-white-light/90">
                       <li>
                         <div className="flex items-center px-4 py-4">
-                          <img
-                            className="h-10 w-10 rounded-md object-cover"
-                            src={session.user?.image as string}
-                            alt="userProfile"
-                          />
+                          {session.user?.image ? (
+                            <img
+                              className="h-10 w-10 rounded-md object-cover"
+                              src={session.user?.image as string}
+                              alt="userProfile"
+                            />
+                          ) : (
+                            <div className="w-[36px] h-[36px] bg-gray-100 rounded-md"></div>
+                          )}
                           <div className="truncate ltr:pl-4 rtl:pr-4">
                             <h4 className="text-base">{session.user?.name}</h4>
                             <button
