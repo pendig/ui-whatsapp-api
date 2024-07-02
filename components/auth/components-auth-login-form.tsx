@@ -24,7 +24,6 @@ const ComponentsAuthLoginForm = () => {
             type="username"
             placeholder="Enter username"
             className="form-input ps-10 placeholder:text-white-dark"
-            value="username"
           />
           <span className="absolute start-4 top-1/2 -translate-y-1/2">
             <IconMail fill={true} />
@@ -39,7 +38,6 @@ const ComponentsAuthLoginForm = () => {
             type="password"
             placeholder="Enter Password"
             className="form-input ps-10 placeholder:text-white-dark"
-            value="password"
           />
           <span className="absolute start-4 top-1/2 -translate-y-1/2">
             <IconLockDots fill={true} />
