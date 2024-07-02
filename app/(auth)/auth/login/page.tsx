@@ -55,7 +55,7 @@ const CoverLogin = () => {
               </div>
               <ComponentsAuthLoginForm />
 
-              <div className="relative my-7 text-center md:mb-9">
+              {/* <div className="relative my-7 text-center md:mb-9">
                 <span className="absolute inset-x-0 top-1/2 h-px w-full -translate-y-1/2 bg-white-light dark:bg-white-dark"></span>
                 <span className="relative bg-white px-2 font-bold uppercase text-white-dark dark:bg-dark dark:text-white-light">
                   or
@@ -70,7 +70,7 @@ const CoverLogin = () => {
                   <IconGoogle />
                   <span className="ml-2">Login With Google</span>
                 </button>
-              </div>
+              </div> */}
             </div>
             <p className="absolute bottom-6 w-full text-center dark:text-white">
               © {new Date().getFullYear()}.Pendig All Rights Reserved.
