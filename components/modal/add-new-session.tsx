@@ -6,10 +6,12 @@ import IconPlus from '../icon/icon-plus';
 import { useRouter } from 'next/navigation';
 import { createNewSession } from '@/actions/action';
 import toast from 'react-hot-toast';
+import { signOut } from 'next-auth/react';
 
 const AddNewSession = ({ isCreate = false }) => {
   const [modal, setModal] = useState(isCreate);
   const [sessionName, setSessionName] = useState('');
+  const [callbackUrl, setCallbackUrl] = useState('');
 
   const router = useRouter();
 
@@ -22,11 +24,14 @@ const AddNewSession = ({ isCreate = false }) => {
   const handleSubmit = async () => {
     toast.dismiss();
     const loadingToast = toast.loading('Waiting...');
-    const createNewSessionResponse = await createNewSession(sessionName);
+    const createNewSessionResponse = await createNewSession(sessionName, callbackUrl);
 
     if (!createNewSessionResponse.success) {
       toast.dismiss(loadingToast);
       toast.error(createNewSessionResponse?.error || 'This is an error!');
+      if (createNewSessionResponse?.error === 'You are not authorized to perform this action') {
+        await signOut();
+      }
       return;
     }
     toast.dismiss(loadingToast);
@@ -102,15 +107,28 @@ const AddNewSession = ({ isCreate = false }) => {
                           e.preventDefault();
                           await handleSubmit();
                         }}
+                        className='grid gap-5'
                       >
-                        <label htmlFor="sessionName">Session Name</label>
-                        <input
-                          id="sessionName"
-                          type="text"
-                          placeholder="Enter Session Name"
-                          className="form-input"
-                          onChange={(event) => setSessionName(event.target.value)}
-                        />
+                        <div>
+                          <label htmlFor="sessionName">Session Name</label>
+                          <input
+                            id="sessionName"
+                            type="text"
+                            placeholder="Enter Session Name"
+                            className="form-input"
+                            onChange={(event) => setSessionName(event.target.value)}
+                          />
+                        </div>
+                        <div>
+                          <label htmlFor="callbackUrl">Callback URL</label>
+                          <input
+                            id="callbackUrl"
+                            type="text"
+                            placeholder="https://your-callback-url.com"
+                            className="form-input"
+                            onChange={(event) => setCallbackUrl(event.target.value)}
+                          />
+                        </div>
                       </form>
                     </p>
                     <div className="mt-8 flex items-center justify-end">

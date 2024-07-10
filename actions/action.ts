@@ -4,10 +4,10 @@ import { authOptions } from '@/lib/authOptions';
 import axios from 'axios';
 import { getServerSession } from 'next-auth';
 
-export const createNewSession = async (sessionName: string) => {
+export const createNewSession = async (sessionName: string, callbackUrl?: string) => {
   const session: any = await getServerSession(authOptions);
   try {
-    const endpoint = `${process.env.API_ENDPOINT}/session/start/${sessionName}`;
+    const endpoint = `${process.env.API_ENDPOINT}/session/start/${sessionName}?callbackUrl=${callbackUrl}`;
 
     const response = await axios.get(endpoint, {
       headers: {
@@ -17,6 +17,12 @@ export const createNewSession = async (sessionName: string) => {
     });
     return response.data;
   } catch (error: any) {
+    if (error?.response?.status === 403) {
+      return {
+        success: false,
+        error: 'You are not authorized to perform this action',
+      };
+    }
     const errorMessage = error?.response?.data?.error || error?.message || 'An error occurred';
     const errorResponse = {
       success: false,
