@@ -3,6 +3,8 @@ import IconTrash from './icon/icon-trash';
 import NoCacheImage from './no-cache-image';
 import { checkSessionStatus } from '@/actions/action';
 import { IoLogoWhatsapp } from 'react-icons/io';
+import { encryptText } from '@/lib/encryption';
+import Link from 'next/link';
 
 interface SessionCardProps {
   session: string;
@@ -11,6 +13,8 @@ interface SessionCardProps {
 
 const SessionCard = ({ session, handleTerminate }: SessionCardProps) => {
   const [isConnected, setIsConnected] = useState(false);
+
+  const encryptedSession = encryptText(session);
 
   useEffect(() => {
     const checkStatus = async () => {
@@ -59,12 +63,19 @@ const SessionCard = ({ session, handleTerminate }: SessionCardProps) => {
           <span>{isConnected ? 'Connected' : 'Not Connected'}</span>
         </div>
       </div>
-      {handleTerminate && (
+
+      {handleTerminate ? (
         <div className="my-3 flex items-center justify-center">
           <button className="btn btn-danger btn-sm" onClick={() => handleTerminate(session)}>
             <IconTrash className="mr-2 h-4 w-4" />
             Terminate
           </button>
+        </div>
+      ) : (
+        <div className="my-3 flex items-center justify-center">
+          <Link href={`/qr?code=${encryptedSession}`} target="_blank" className="btn btn-sm btn-primary mb-5">
+            Lihat QR
+          </Link>
         </div>
       )}
     </div>

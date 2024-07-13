@@ -22,7 +22,7 @@ const NoCacheImage: React.FC<NoCacheImageProps> = ({ src, alt }) => {
     let intervalId: any = null;
     if (!imageLoaded) {
       // Jika gambar belum ter-muat, jalankan interval
-      intervalId = setInterval(updateImageSrc, 1000);
+      intervalId = setInterval(updateImageSrc, 2000);
     }
     updateImageSrc(); // Panggil sekali di awal juga
 
@@ -43,7 +43,7 @@ const NoCacheImage: React.FC<NoCacheImageProps> = ({ src, alt }) => {
   return (
     <div>
       {!hasError ? (
-        <img src={uniqueSrc} alt={alt} onError={handleError} onLoad={handleLoad} />
+        <img src={uniqueSrc} alt={alt} onError={handleError} onLoad={handleLoad} className="max-w-full" />
       ) : (
         <FadeLoader color="#36d7b7" loading={true} aria-label="Loading Spinner" data-testid="loader" />
       )}
