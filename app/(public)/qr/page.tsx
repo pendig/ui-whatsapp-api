@@ -14,7 +14,6 @@ const PublicQRCodePage = () => {
   const [isConnected, setIsConnected] = useState(false);
 
   useEffect(() => {
-    console.log({ code, dec });
     const checkStatus = async () => {
       const response = await checkSessionStatus(dec);
 
@@ -35,9 +34,6 @@ const PublicQRCodePage = () => {
 
   return (
     <div className="mt-20 flex justify-center">
-      {/* <div>Code: {code}</div>
-      <div>Enc: {enc}</div>
-      <div>Dec: {dec}</div> */}
       {dec ? (
         <div>
           <h1 className="mb-5 text-center text-3xl font-bold">Session: {dec}</h1>
