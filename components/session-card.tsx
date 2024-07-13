@@ -5,6 +5,7 @@ import { checkSessionStatus } from '@/actions/action';
 import { IoLogoWhatsapp } from 'react-icons/io';
 import { encryptText } from '@/lib/encryption';
 import Link from 'next/link';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
 
 interface SessionCardProps {
   session: string;
@@ -13,6 +14,7 @@ interface SessionCardProps {
 
 const SessionCard = ({ session, handleTerminate }: SessionCardProps) => {
   const [isConnected, setIsConnected] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   const encryptedSession = encryptText(session);
 
@@ -34,6 +36,16 @@ const SessionCard = ({ session, handleTerminate }: SessionCardProps) => {
       checkStatus();
     }
   }, [session]);
+
+  useEffect(() => {
+    if (copied) {
+      const timer = setTimeout(() => {
+        setCopied(false);
+      }, 3000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [copied]);
 
   return (
     <div className="md:col-span-4 lg:col-span-3">
@@ -72,10 +84,18 @@ const SessionCard = ({ session, handleTerminate }: SessionCardProps) => {
           </button>
         </div>
       ) : (
-        <div className="my-3 flex items-center justify-center">
-          <Link href={`/qr?code=${encryptedSession}`} target="_blank" className="btn btn-sm btn-primary mb-5">
-            Lihat QR
-          </Link>
+        <div className="flex items-center justify-center gap-3 my-3">
+          <CopyToClipboard
+            text={`${process.env.NEXT_PUBLIC_APP_URL}/qr?code=${encryptedSession}`}
+            onCopy={() => setCopied(true)}
+          >
+            <button className="btn btn-warning btn-sm mt-0 w-[100px]">{copied ? 'Copied' : 'Copy URL'}</button>
+          </CopyToClipboard>
+          <div className="flex items-center justify-center">
+            <Link href={`/qr?code=${encryptedSession}`} target="_blank" className="btn btn-sm btn-primary w-[100px]">
+              Lihat QR
+            </Link>
+          </div>
         </div>
       )}
     </div>
