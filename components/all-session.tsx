@@ -40,7 +40,7 @@ const AllSession: React.FC<AllSessionProps> = ({ isCreate = false }) => {
         sessions.map((session, i) => (
           <div key={i} className="md:col-span-4 lg:col-span-3">
             <SessionCard session={session} />
-            <button onClick={() => handleEditWebhook(session)}>Edit Webhook URL</button>
+            <button className="btn btn-warning btn-sm mt-0" onClick={() => handleEditWebhook(session)}>Edit Webhook URL</button>
           </div>
         ))}
       {isEditModalOpen && selectedSession && (
