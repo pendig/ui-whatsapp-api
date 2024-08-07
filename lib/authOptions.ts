@@ -25,6 +25,10 @@ export const authOptions: NextAuthOptions = {
             headers: { 'Content-Type': 'application/json' },
           });
 
+          // const resJson = await res.json();
+
+          // console.log(resJson);
+
           if (!res.ok) {
             return null;
           }

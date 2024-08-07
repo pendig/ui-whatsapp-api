@@ -97,3 +97,29 @@ export const checkSessionStatus = async (sessionName: string) => {
     return errorResponse;
   }
 };
+
+export const editWebhookUrl = async (sessionName: string, newCallbackUrl: string) => {
+  const session: any = await getServerSession(authOptions);
+  try {
+    const endpoint = `${process.env.API_ENDPOINT}/session/updateWebhook/${sessionName}`;
+
+    const response = await axios.patch(
+      endpoint,
+      { callbackUrl: newCallbackUrl },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + session?.accessToken,
+        },
+      }
+    );
+    return response.data;
+  } catch (error: any) {
+    const errorMessage = error?.response?.data?.error || error?.message || 'An error occurred';
+    const errorResponse = {
+      success: false,
+      error: errorMessage,
+    };
+    return errorResponse;
+  }
+};

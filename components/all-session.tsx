@@ -2,11 +2,18 @@
 
 import React, { useEffect, useState } from 'react';
 import AddNewSession from './modal/add-new-session';
+import EditWebhookUrl from './modal/edit-webhook-url';
 import { FadeLoader } from 'react-spinners';
 import SessionCard from './session-card';
 
-const AllSession = ({ isCreate = false }) => {
-  const [sessions, setSessions] = React.useState([]) as any[];
+interface AllSessionProps {
+  isCreate?: boolean;
+}
+
+const AllSession: React.FC<AllSessionProps> = ({ isCreate = false }) => {
+  const [sessions, setSessions] = useState<string[]>([]);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [selectedSession, setSelectedSession] = useState<string | null>(null);
 
   useEffect(() => {
     const stringSessions = localStorage.getItem('sessionName');
@@ -14,6 +21,11 @@ const AllSession = ({ isCreate = false }) => {
       setSessions(JSON.parse(stringSessions));
     }
   }, []);
+
+  const handleEditWebhook = (sessionName: string) => {
+    setSelectedSession(sessionName);
+    setIsEditModalOpen(true);
+  };
 
   return (
     <div className="grid gap-5 md:grid-cols-12">
@@ -24,7 +36,20 @@ const AllSession = ({ isCreate = false }) => {
           </div>
         </div>
       </div>
-      {sessions && sessions.map((session: any, i: number) => <SessionCard session={session} key={i} />)}
+      {sessions &&
+        sessions.map((session, i) => (
+          <div key={i} className="md:col-span-4 lg:col-span-3">
+            <SessionCard session={session} />
+            <button onClick={() => handleEditWebhook(session)}>Edit Webhook URL</button>
+          </div>
+        ))}
+      {isEditModalOpen && selectedSession && (
+        <EditWebhookUrl
+          sessionName={selectedSession}
+          isOpen={isEditModalOpen}
+          onClose={() => setIsEditModalOpen(false)}
+        />
+      )}
     </div>
   );
 };
