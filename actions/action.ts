@@ -123,3 +123,32 @@ export const editWebhookUrl = async (sessionName: string, newCallbackUrl: string
     return errorResponse;
   }
 };
+
+export  const fetchSessions = async () => {
+  const session: any = await getServerSession(authOptions);
+  try {
+    const endpoint = `${process.env.NEXT_PUBLIC_API_ENDPOINT}/session/list`;
+
+    const response = await axios.get(endpoint, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + session?.accessToken,
+      },
+    });
+
+    return response.data;
+  } catch (error: any) {
+    if (error?.response?.status === 403) {
+      return {
+        success: false,
+        error: 'You are not authorized to perform this action',
+      };
+    }
+    const errorMessage = error?.response?.data?.error || error?.message || 'An error occurred';
+    const errorResponse = {
+      success: false,
+      error: errorMessage,
+    };
+    return errorResponse;
+  }
+};

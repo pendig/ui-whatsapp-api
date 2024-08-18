@@ -3,27 +3,46 @@
 import React, { useEffect, useState } from 'react';
 import AddNewSession from './modal/add-new-session';
 import EditWebhookUrl from './modal/edit-webhook-url';
-import { FadeLoader } from 'react-spinners';
 import SessionCard from './session-card';
+import { FadeLoader } from 'react-spinners';
+import { useSession } from 'next-auth/react';
+import axios from 'axios';
+import { fetchSessions } from '@/actions/action';
 
 interface AllSessionProps {
   isCreate?: boolean;
 }
 
-const AllSession: React.FC<AllSessionProps> = ({ isCreate = false }) => {
-  const [sessions, setSessions] = useState<string[]>([]);
+interface Session {
+  id: number;
+  name: string;
+  webhook_url: string;
+  user_id: number;
+  created_at: string;
+  updated_at: string;
+}
+
+const AllSession = async ({ isCreate = false }) => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [selectedSession, setSelectedSession] = useState<string | null>(null);
+  const [selectedSession, setSelectedSession] = useState<Session | null>(null);
+  const [sessions, setSessions] = useState<any>();
+
+  const { data: session }: any = useSession();
+
+  const fetchSession = async () => {
+    const sessionResponse: any = await fetchSessions();
+
+    console.log({ sessionResponse });
+
+    setSessions(sessionResponse?.sessions);
+  };
 
   useEffect(() => {
-    const stringSessions = localStorage.getItem('sessionName');
-    if (stringSessions) {
-      setSessions(JSON.parse(stringSessions));
-    }
-  }, []);
+    fetchSession();
+  }, [session]);
 
-  const handleEditWebhook = (sessionName: string) => {
-    setSelectedSession(sessionName);
+  const handleEditWebhook = (session: Session) => {
+    setSelectedSession(session);
     setIsEditModalOpen(true);
   };
 
@@ -37,15 +56,18 @@ const AllSession: React.FC<AllSessionProps> = ({ isCreate = false }) => {
         </div>
       </div>
       {sessions &&
-        sessions.map((session, i) => (
-          <div key={i} className="md:col-span-4 lg:col-span-3">
-            <SessionCard session={session} />
-            <button className="btn btn-warning btn-sm mt-0" onClick={() => handleEditWebhook(session)}>Edit Webhook URL</button>
+        sessions.length &&
+        sessions.map((session: any, i: any) => (
+          <div key={session.id} className="md:col-span-4 lg:col-span-3">
+            <SessionCard session={session.name} />
+            <button className="btn btn-warning btn-sm mt-0" onClick={() => handleEditWebhook(session)}>
+              Edit Webhook URL
+            </button>
           </div>
         ))}
       {isEditModalOpen && selectedSession && (
         <EditWebhookUrl
-          sessionName={selectedSession}
+          sessionName={selectedSession.name}
           isOpen={isEditModalOpen}
           onClose={() => setIsEditModalOpen(false)}
         />
