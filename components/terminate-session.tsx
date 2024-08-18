@@ -6,8 +6,9 @@ import IconTrash from './icon/icon-trash';
 import { useRouter } from 'next/navigation';
 import TerminateAllSession from './modal/terminate-all-session';
 import toast from 'react-hot-toast';
-import { terminateSession } from '@/actions/action';
+import { fetchSessions, terminateSession } from '@/actions/action';
 import SessionCard from './session-card';
+import { useSession } from 'next-auth/react';
 
 interface NoCacheImageProps {
   src: string;
@@ -47,15 +48,22 @@ const NoCacheImage: React.FC<NoCacheImageProps> = ({ src, alt }) => {
 };
 
 const TerminateSession = ({ isShow = false }) => {
-  const [sessions, setSessions] = React.useState([]) as any[];
+  const [sessions, setSessions] = useState<any>();
   const router = useRouter();
 
+  const { data: session }: any = useSession();
+
+  const fetchSession = async () => {
+    const sessionResponse: any = await fetchSessions();
+
+    console.log({ sessionResponse });
+
+    setSessions(sessionResponse?.sessions);
+  };
+
   useEffect(() => {
-    const stringSessions = localStorage.getItem('sessionName');
-    if (stringSessions) {
-      setSessions(JSON.parse(stringSessions));
-    }
-  }, []);
+    fetchSession();
+  }, [session]);
 
   const handleTerminate = async (sessionName: string) => {
     toast.dismiss();
@@ -97,10 +105,13 @@ const TerminateSession = ({ isShow = false }) => {
       </div>
       <TerminateAllSession isShow={isShow} />
       <div className="grid gap-5 md:grid-cols-12">
-        {sessions &&
-          sessions.map((session: any, i: number) => (
-            <SessionCard session={session} key={i} handleTerminate={handleTerminate} />
-          ))}
+      {sessions &&
+        sessions.length &&
+        sessions.map((session: any, i: any) => (
+          <div key={session.id} className="md:col-span-4 lg:col-span-3">
+            <SessionCard session={session.name} key={i} handleTerminate={handleTerminate} />
+          </div>
+        ))}
       </div>
     </>
   );
