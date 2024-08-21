@@ -22,7 +22,7 @@ interface Session {
   updated_at: string;
 }
 
-const AllSession = async ({ isCreate = false }) => {
+const AllSession = ({ isCreate = false }) => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedSession, setSelectedSession] = useState<Session | null>(null);
   const [sessions, setSessions] = useState<any>();
@@ -60,9 +60,13 @@ const AllSession = async ({ isCreate = false }) => {
         sessions.map((session: any, i: any) => (
           <div key={session.id} className="md:col-span-4 lg:col-span-3">
             <SessionCard session={session.name} />
-            <button className="btn btn-warning btn-sm mt-0" onClick={() => handleEditWebhook(session)}>
-              Edit Webhook URL
-            </button>
+            <div className="w-full">
+              <div className="flex justify-center">
+                <button className="btn btn-warning btn-sm mt-0" onClick={() => handleEditWebhook(session)}>
+                  Edit Webhook URL
+                </button>
+              </div>
+            </div>
           </div>
         ))}
       {isEditModalOpen && selectedSession && (

@@ -12,9 +12,9 @@ interface IProps {
 const ProviderComponent = ({ children }: IProps) => {
   return (
     <Provider store={store}>
-      <Suspense fallback={<Loading />}>
-        <App>{children} </App>
-      </Suspense>
+      <App>{children} </App>
+      {/* <Suspense fallback={<Loading />}>
+      </Suspense> */}
     </Provider>
   );
 };
