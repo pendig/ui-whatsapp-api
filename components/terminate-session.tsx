@@ -71,38 +71,6 @@ const TerminateSession = ({ isShow = false }) => {
     fetchSession();
   }, [session]);
 
-  const handleTerminate = async (sessionName: string) => {
-    toast.dismiss();
-    const loadingToast = toast.loading('Waiting...');
-    const terminateSessionResponse = await terminateSession(sessionName);
-  
-    if (!terminateSessionResponse.success) {
-      toast.dismiss(loadingToast);
-      toast.error(terminateSessionResponse?.error || 'This is an error!');
-      if (terminateSessionResponse?.error === 'You are not authorized to perform this action') {
-        await signOut();
-      }
-      return;
-    }
-  
-    toast.dismiss(loadingToast);
-    toast.success('Successfully terminated session!');
-  
-    // Remove session name from local storage
-    const existingSessionName = localStorage.getItem('sessionName');
-    if (existingSessionName) {
-      const sessionNameParsed = JSON.parse(existingSessionName);
-      const uniqueSessionName = sessionNameParsed.filter((name: string) => name !== sessionName);
-      localStorage.setItem('sessionName', JSON.stringify(uniqueSessionName));
-    }
-  
-    const stringSessions = localStorage.getItem('sessionName');
-    if (stringSessions) {
-      setSessions(JSON.parse(stringSessions));
-    }
-  };
-  
-
   return (
     <>
       <div className="mb-5 flex justify-end">
@@ -111,19 +79,22 @@ const TerminateSession = ({ isShow = false }) => {
           onClick={() => {
             router.push('/session/terminate/all');
           }}
+          disabled={!sessions || !sessions.length}
         >
           Terminate All Session
         </button>
       </div>
       <TerminateAllSession isShow={isShow} />
       <div className="grid gap-5 md:grid-cols-12">
-        {sessions &&
-          sessions.length &&
-          sessions.map((session: any, i: any) => (
-            <div key={session.id} className="md:col-span-4 lg:col-span-3">
-              <SessionCard session={session.name} key={i} handleTerminate={handleTerminate} />
-            </div>
-          ))}
+        {sessions && sessions.length ? (
+          <>
+            {sessions.map((session: any, i: any) => (
+              <div key={session.id} className="md:col-span-4 lg:col-span-3">
+                <SessionCard session={session.name} key={i} isTerminate />
+              </div>
+            ))}
+          </>
+        ) : null}
       </div>
     </>
   );

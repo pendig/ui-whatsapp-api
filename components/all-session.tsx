@@ -59,20 +59,22 @@ const AllSession = ({ isCreate = false }) => {
           </div>
         </div>
       </div>
-      {sessions &&
-        sessions.length &&
-        sessions.map((session: any, i: any) => (
-          <div key={session.id} className="md:col-span-4 lg:col-span-3">
-            <SessionCard session={session.name} />
-            <div className="w-full">
-              <div className="flex justify-center">
-                <button className="btn btn-warning btn-sm mt-0" onClick={() => handleEditWebhook(session)}>
-                  Edit Webhook URL
-                </button>
+      {sessions && sessions.length ? (
+        <>
+          {sessions.map((session: any, i: any) => (
+            <div key={session.id} className="md:col-span-4 lg:col-span-3">
+              <SessionCard session={session.name} />
+              <div className="w-full">
+                <div className="flex justify-center">
+                  <button className="btn btn-warning btn-sm mt-0" onClick={() => handleEditWebhook(session)}>
+                    Edit Webhook URL
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </>
+      ) : null}
       {isEditModalOpen && selectedSession && (
         <EditWebhookUrl
           sessionName={selectedSession.name}

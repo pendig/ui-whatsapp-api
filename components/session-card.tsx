@@ -8,15 +8,19 @@ import Link from 'next/link';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import toast from 'react-hot-toast';
 import { signOut } from 'next-auth/react';
+import TerminateSession from './terminate-session';
+import TerminateSessions from './modal/terminate-sessions';
 
 interface SessionCardProps {
   session: string;
+  isTerminate?: boolean;
   handleTerminate?: (sessionName: string) => void;
 }
 
-const SessionCard = ({ session, handleTerminate }: SessionCardProps) => {
+const SessionCard = ({ session, handleTerminate, isTerminate }: SessionCardProps) => {
   const [isConnected, setIsConnected] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [isShow, setIsShow] = useState(false);
 
   const encryptedSession = encryptText(session);
 
@@ -53,6 +57,11 @@ const SessionCard = ({ session, handleTerminate }: SessionCardProps) => {
     }
   }, [copied]);
 
+  const openTerminateModal = () => {
+    console.log('openTerminateModal');
+    setIsShow(true);
+  };
+
   return (
     <div className="md:col-span-4 lg:col-span-3">
       <div className="card aspect-square rounded-md shadow-lg">
@@ -82,9 +91,9 @@ const SessionCard = ({ session, handleTerminate }: SessionCardProps) => {
         </div>
       </div>
 
-      {handleTerminate ? (
+      {isTerminate ? (
         <div className="my-3 flex items-center justify-center">
-          <button className="btn btn-danger btn-sm" onClick={() => handleTerminate(session)}>
+          <button className="btn btn-danger btn-sm" onClick={openTerminateModal}>
             <IconTrash className="mr-2 h-4 w-4" />
             Terminate
           </button>
@@ -104,6 +113,11 @@ const SessionCard = ({ session, handleTerminate }: SessionCardProps) => {
           </div>
         </div>
       )}
+      {isShow ? (
+        <>
+          <TerminateSessions isShow={true} name={session} onCancel={() => setIsShow(false)} />
+        </>
+      ) : null}
     </div>
   );
 };
