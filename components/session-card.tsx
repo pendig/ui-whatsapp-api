@@ -6,6 +6,8 @@ import { IoLogoWhatsapp } from 'react-icons/io';
 import { encryptText } from '@/lib/encryption';
 import Link from 'next/link';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
+import toast from 'react-hot-toast';
+import { signOut } from 'next-auth/react';
 
 interface SessionCardProps {
   session: string;
@@ -22,11 +24,15 @@ const SessionCard = ({ session, handleTerminate }: SessionCardProps) => {
     const checkStatus = async () => {
       const response = await checkSessionStatus(session);
 
+      if (response.error && response.error === 'You are not authorized to perform this action') {
+        await signOut();
+        return;
+      }
+
       const state = response?.state;
 
       if (state === 'CONNECTED') {
         setIsConnected(true);
-        return;
       } else {
         setIsConnected(false);
       }
@@ -84,7 +90,7 @@ const SessionCard = ({ session, handleTerminate }: SessionCardProps) => {
           </button>
         </div>
       ) : (
-        <div className="flex items-center justify-center gap-3 my-3">
+        <div className="my-3 flex items-center justify-center gap-3">
           <CopyToClipboard
             text={`${process.env.NEXT_PUBLIC_APP_URL}/qr?code=${encryptedSession}`}
             onCopy={() => setCopied(true)}

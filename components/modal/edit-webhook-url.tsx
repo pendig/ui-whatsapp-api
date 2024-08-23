@@ -5,6 +5,7 @@ import { useState, Fragment } from 'react';
 import { useRouter } from 'next/navigation';
 import { editWebhookUrl } from '@/actions/action';
 import toast from 'react-hot-toast';
+import { signOut } from 'next-auth/react';
 
 interface EditWebhookUrlProps {
   sessionName: string;
@@ -24,10 +25,15 @@ const EditWebhookUrl: React.FC<EditWebhookUrlProps> = ({ sessionName, isOpen, on
     if (!editWebhookResponse.success) {
       toast.dismiss(loadingToast);
       toast.error(editWebhookResponse?.error || 'This is an error!');
+      if (editWebhookResponse?.error === 'You are not authorized to perform this action') {
+        await signOut();
+      }
       return;
     }
+
     toast.dismiss(loadingToast);
     toast.success('Successfully updated the webhook URL!');
+    onClose();
     router.refresh(); // Refresh the page by pushing the current path
   };
 

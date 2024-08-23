@@ -24,6 +24,7 @@ const AddNewSession = ({ isCreate = false }) => {
   const handleSubmit = async () => {
     toast.dismiss();
     const loadingToast = toast.loading('Waiting...');
+
     const createNewSessionResponse = await createNewSession(sessionName, callbackUrl);
 
     if (!createNewSessionResponse.success) {
@@ -34,20 +35,16 @@ const AddNewSession = ({ isCreate = false }) => {
       }
       return;
     }
+
+    const existingSessionName = localStorage.getItem('sessionName');
+    let sessionNameParsed = existingSessionName ? JSON.parse(existingSessionName) : [];
+
+    sessionNameParsed = [...new Set([...sessionNameParsed, sessionName])];
+    localStorage.setItem('sessionName', JSON.stringify(sessionNameParsed));
+
     toast.dismiss(loadingToast);
     toast.success('Successfully create a new session!');
-    const existingSessionName = localStorage.getItem('sessionName');
-    if (existingSessionName) {
-      const sessionNameParsed = JSON.parse(existingSessionName);
-      sessionNameParsed.push(sessionName);
-
-      const uniqueSessionName = [...new Set(sessionNameParsed)];
-      localStorage.setItem('sessionName', JSON.stringify(uniqueSessionName));
-      router.push('/session');
-    } else {
-      localStorage.setItem('sessionName', JSON.stringify([sessionName]));
-      router.push('/session');
-    }
+    router.push('/session');
   };
 
   return (
@@ -107,7 +104,7 @@ const AddNewSession = ({ isCreate = false }) => {
                           e.preventDefault();
                           await handleSubmit();
                         }}
-                        className='grid gap-5'
+                        className="grid gap-5"
                       >
                         <div>
                           <label htmlFor="sessionName">Session Name</label>

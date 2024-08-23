@@ -4,6 +4,20 @@ import { authOptions } from '@/lib/authOptions';
 import axios from 'axios';
 import { getServerSession } from 'next-auth';
 
+const handleForbiddenError = (error: any) => {
+  if (error?.response?.status === 403) {
+    return {
+      success: false,
+      error: 'You are not authorized to perform this action',
+    };
+  }
+  const errorMessage = error?.response?.data?.error || error?.message || 'An error occurred';
+  return {
+    success: false,
+    error: errorMessage,
+  };
+};
+
 export const createNewSession = async (sessionName: string, callbackUrl?: string) => {
   const session: any = await getServerSession(authOptions);
   try {
@@ -17,18 +31,7 @@ export const createNewSession = async (sessionName: string, callbackUrl?: string
     });
     return response.data;
   } catch (error: any) {
-    if (error?.response?.status === 403) {
-      return {
-        success: false,
-        error: 'You are not authorized to perform this action',
-      };
-    }
-    const errorMessage = error?.response?.data?.error || error?.message || 'An error occurred';
-    const errorResponse = {
-      success: false,
-      error: errorMessage,
-    };
-    return errorResponse;
+    return handleForbiddenError(error);
   }
 };
 
@@ -45,12 +48,7 @@ export const terminateSession = async (sessionName: string) => {
     });
     return response.data;
   } catch (error: any) {
-    const errorMessage = error?.response?.data?.error || error?.message || 'An error occurred';
-    const errorResponse = {
-      success: false,
-      error: errorMessage,
-    };
-    return errorResponse;
+    return handleForbiddenError(error);
   }
 };
 
@@ -67,12 +65,7 @@ export const terminateAllSession = async () => {
     });
     return response.data;
   } catch (error: any) {
-    const errorMessage = error?.response?.data?.error || error?.message || 'An error occurred';
-    const errorResponse = {
-      success: false,
-      error: errorMessage,
-    };
-    return errorResponse;
+    return handleForbiddenError(error);
   }
 };
 
@@ -89,12 +82,8 @@ export const checkSessionStatus = async (sessionName: string) => {
     });
     return response.data;
   } catch (error: any) {
-    const errorMessage = error?.response?.data?.error || error?.message || 'An error occurred';
-    const errorResponse = {
-      success: false,
-      error: errorMessage,
-    };
-    return errorResponse;
+    console.log({error})
+    return handleForbiddenError(error);
   }
 };
 
@@ -115,16 +104,11 @@ export const editWebhookUrl = async (sessionName: string, newCallbackUrl: string
     );
     return response.data;
   } catch (error: any) {
-    const errorMessage = error?.response?.data?.error || error?.message || 'An error occurred';
-    const errorResponse = {
-      success: false,
-      error: errorMessage,
-    };
-    return errorResponse;
+    return handleForbiddenError(error);
   }
 };
 
-export  const fetchSessions = async () => {
+export const fetchSessions = async () => {
   const session: any = await getServerSession(authOptions);
   try {
     const endpoint = `${process.env.NEXT_PUBLIC_API_ENDPOINT}/session/list`;
@@ -138,17 +122,6 @@ export  const fetchSessions = async () => {
 
     return response.data;
   } catch (error: any) {
-    if (error?.response?.status === 403) {
-      return {
-        success: false,
-        error: 'You are not authorized to perform this action',
-      };
-    }
-    const errorMessage = error?.response?.data?.error || error?.message || 'An error occurred';
-    const errorResponse = {
-      success: false,
-      error: errorMessage,
-    };
-    return errorResponse;
+    return handleForbiddenError(error);
   }
 };

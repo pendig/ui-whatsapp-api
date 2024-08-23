@@ -5,6 +5,7 @@ import { useState, Fragment } from 'react';
 import { useRouter } from 'next/navigation';
 import { terminateAllSession } from '@/actions/action';
 import toast, { Toaster } from 'react-hot-toast';
+import { signOut } from 'next-auth/react';
 
 const TerminateAllSession = ({ isShow = false }) => {
   const [modal, setModal] = useState(isShow);
@@ -12,19 +13,26 @@ const TerminateAllSession = ({ isShow = false }) => {
   const router = useRouter();
 
   const handleSubmit = async () => {
+    toast.dismiss();
+    const loadingToast = toast.loading('Waiting...');
     const response = await terminateAllSession();
 
     if (!response.success) {
+      toast.dismiss(loadingToast);
       toast.error(response.error || 'This is an error!');
+      if (response.error === 'You are not authorized to perform this action') {
+        await signOut();
+      }
       return;
     }
 
     localStorage.removeItem('sessionName');
-
     router.push('/session');
-    toast.success('Successfully terminate all session!');
-    return;
+
+    toast.dismiss(loadingToast);
+    toast.success('Successfully terminated all sessions!');
   };
+
   return (
     <>
       <Transition appear show={modal} as={Fragment}>

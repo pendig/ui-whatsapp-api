@@ -1,13 +1,11 @@
 'use client';
-
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import AddNewSession from './modal/add-new-session';
 import EditWebhookUrl from './modal/edit-webhook-url';
 import SessionCard from './session-card';
-import { FadeLoader } from 'react-spinners';
-import { useSession } from 'next-auth/react';
-import axios from 'axios';
+import { signOut, useSession } from 'next-auth/react';
 import { fetchSessions } from '@/actions/action';
+import toast from 'react-hot-toast';
 
 interface AllSessionProps {
   isCreate?: boolean;
@@ -32,7 +30,13 @@ const AllSession = ({ isCreate = false }) => {
   const fetchSession = async () => {
     const sessionResponse: any = await fetchSessions();
 
-    console.log({ sessionResponse });
+    if (!sessionResponse.success) {
+      toast.error(sessionResponse?.error || 'Failed to fetch sessions');
+      if (sessionResponse?.error === 'You are not authorized to perform this action') {
+        await signOut();
+      }
+      return;
+    }
 
     setSessions(sessionResponse?.sessions);
   };
