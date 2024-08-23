@@ -11,7 +11,7 @@ const handleForbiddenError = (error: any) => {
       error: 'You are not authorized to perform this action',
     };
   }
-  const errorMessage = error?.response?.data?.error || error?.message || 'An error occurred';
+  const errorMessage = error?.response?.data?.error || error?.message || 'Oops! server error. Please try again later';
   return {
     success: false,
     error: errorMessage,
