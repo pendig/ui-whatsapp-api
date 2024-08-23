@@ -3,8 +3,10 @@
 import { checkSessionStatus } from '@/actions/action';
 import NoCacheImage from '@/components/no-cache-image';
 import { decryptText } from '@/lib/encryption';
+import { signOut } from 'next-auth/react';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
 
 const PublicQRCodePage = () => {
   const searchParams = useSearchParams();
@@ -12,25 +14,33 @@ const PublicQRCodePage = () => {
   const dec = decryptText(code ? code.replace(/ /g, '+') : '');
 
   const [isConnected, setIsConnected] = useState(false);
+  const [isChecking, setIsChecking] = useState(true);
 
   useEffect(() => {
     const checkStatus = async () => {
       const response = await checkSessionStatus(dec);
 
+      if (response.error && response.error === 'You are not authorized to perform this action') {
+        await signOut();
+        return;
+      }
+
       const state = response?.state;
 
-      if (state === 'CONNECTED') {
-        setIsConnected(true);
-        return;
-      } else {
-        setIsConnected(false);
-      }
+      setIsConnected(state === 'CONNECTED');
+      setIsChecking(false);
     };
 
     if (code && dec) {
       checkStatus();
+    } else {
+      setIsChecking(false);
     }
   }, [code, dec]);
+
+  if (isChecking) {
+    return <div className="mt-20 flex justify-center">Loading...</div>;
+  }
 
   return (
     <div className="mt-20 flex justify-center">
