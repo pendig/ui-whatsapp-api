@@ -3,15 +3,22 @@ import IconLockDots from '@/components/icon/icon-lock-dots';
 import IconMail from '@/components/icon/icon-mail';
 import { signIn } from 'next-auth/react';
 import React from 'react';
+import toast from 'react-hot-toast';
 
 const ComponentsAuthLoginForm = () => {
-  const submitForm = (e: any) => {
+  const submitForm = async (e: any) => {
     e.preventDefault();
-    signIn('credentials', {
+    const result = await signIn('credentials', {
       username: e.target.username.value,
       password: e.target.Password.value,
       redirect: false,
     });
+
+    if (result?.error) {
+      toast.error('Invalid username or password');
+    } else {
+      toast.success('Successfully signed in');
+    }
   };
 
   return (
@@ -21,7 +28,7 @@ const ComponentsAuthLoginForm = () => {
         <div className="relative text-white-dark">
           <input
             id="username"
-            type="username"
+            type="text"
             placeholder="Enter username"
             className="form-input ps-10 placeholder:text-white-dark"
           />
