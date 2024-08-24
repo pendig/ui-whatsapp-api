@@ -7,12 +7,13 @@ import { useRouter } from 'next/navigation';
 import { createNewSession } from '@/actions/action';
 import toast from 'react-hot-toast';
 import { signOut } from 'next-auth/react';
+import IconLoader from '../icon/icon-loader';
 
 const AddNewSession = ({ isCreate = false }) => {
   const [modal, setModal] = useState(isCreate);
   const [sessionName, setSessionName] = useState('');
   const [callbackUrl, setCallbackUrl] = useState('');
-
+  const [isSubmitting, setIsSubmitting] = useState(false); // State untuk tombol save
   const router = useRouter();
 
   useEffect(() => {
@@ -22,13 +23,15 @@ const AddNewSession = ({ isCreate = false }) => {
   }, []);
 
   const handleSubmit = async () => {
+    setIsSubmitting(true); // Set submitting true saat submit
     toast.dismiss();
-    const loadingToast = toast.loading('Waiting...');
+    const loadingToast = toast.loading('Please wait...');
 
     const createNewSessionResponse = await createNewSession(sessionName, callbackUrl);
 
     if (!createNewSessionResponse.success) {
-      toast.dismiss(loadingToast);
+      setIsSubmitting(false); // Kembalikan tombol save menjadi tidak disabled
+      toast.dismiss();
       toast.error(createNewSessionResponse?.error || 'This is an error!');
       if (createNewSessionResponse?.error === 'You are not authorized to perform this action') {
         await signOut();
@@ -43,7 +46,7 @@ const AddNewSession = ({ isCreate = false }) => {
     localStorage.setItem('sessionName', JSON.stringify(sessionNameParsed));
 
     toast.dismiss(loadingToast);
-    toast.success('Successfully create a new session!');
+    toast.success('Successfully created a new session!');
     router.push('/session');
   };
 
@@ -98,36 +101,37 @@ const AddNewSession = ({ isCreate = false }) => {
                     ></button>
                   </div>
                   <div className="p-5">
-                    <p>
-                      <form
-                        onSubmit={async (e) => {
-                          e.preventDefault();
-                          await handleSubmit();
-                        }}
-                        className="grid gap-5"
-                      >
-                        <div>
-                          <label htmlFor="sessionName">Session Name</label>
-                          <input
-                            id="sessionName"
-                            type="text"
-                            placeholder="Enter Session Name"
-                            className="form-input"
-                            onChange={(event) => setSessionName(event.target.value)}
-                          />
-                        </div>
-                        <div>
-                          <label htmlFor="callbackUrl">Callback URL</label>
-                          <input
-                            id="callbackUrl"
-                            type="text"
-                            placeholder="https://your-callback-url.com"
-                            className="form-input"
-                            onChange={(event) => setCallbackUrl(event.target.value)}
-                          />
-                        </div>
-                      </form>
-                    </p>
+                    <form
+                      onSubmit={async (e) => {
+                        e.preventDefault();
+                        await handleSubmit();
+                      }}
+                      className="grid gap-5"
+                    >
+                      <div>
+                        <label htmlFor="sessionName">Session Name</label>
+                        <input
+                          id="sessionName"
+                          type="text"
+                          placeholder="Enter Session Name"
+                          className="form-input"
+                          onChange={(event) => setSessionName(event.target.value)}
+                          disabled={isSubmitting} // Disable input ketika sedang submit
+                        />
+                      </div>
+                      <div>
+                        <label htmlFor="callbackUrl">Callback URL</label>
+                        <input
+                          id="callbackUrl"
+                          type="text"
+                          placeholder="https://your-callback-url.com"
+                          className="form-input"
+                          onChange={(event) => setCallbackUrl(event.target.value)}
+                          disabled={isSubmitting} // Disable input ketika sedang submit
+                        />
+                      </div>
+                      <button className="hidden" type="submit"></button>
+                    </form>
                     <div className="mt-8 flex items-center justify-end">
                       <button
                         type="button"
@@ -135,6 +139,7 @@ const AddNewSession = ({ isCreate = false }) => {
                           router.push('/session');
                         }}
                         className="btn btn-outline-danger"
+                        disabled={isSubmitting} // Disable tombol cancel saat submit
                       >
                         Discard
                       </button>
@@ -144,8 +149,11 @@ const AddNewSession = ({ isCreate = false }) => {
                           await handleSubmit();
                         }}
                         className="btn btn-primary ltr:ml-4 rtl:mr-4"
+                        disabled={isSubmitting} // Disable tombol save saat submit
                       >
-                        Save
+                        {isSubmitting ? (
+                          <IconLoader className="animate-spin h-5 w-5 mr-3" />
+                        ) : null} Save
                       </button>
                     </div>
                   </div>

@@ -23,7 +23,7 @@ const EditWebhookUrl: React.FC<EditWebhookUrlProps> = ({ sessionName, isOpen, on
     const editWebhookResponse = await editWebhookUrl(sessionName, newCallbackUrl);
 
     if (!editWebhookResponse.success) {
-      toast.dismiss(loadingToast);
+      toast.dismiss();
       toast.error(editWebhookResponse?.error || 'This is an error!');
       if (editWebhookResponse?.error === 'You are not authorized to perform this action') {
         await signOut();

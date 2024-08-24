@@ -31,6 +31,7 @@ const AllSession = ({ isCreate = false }) => {
     const sessionResponse: any = await fetchSessions();
 
     if (!sessionResponse.success) {
+      toast.dismiss();
       toast.error(sessionResponse?.error || 'Failed to fetch sessions');
       if (sessionResponse?.error === 'You are not authorized to perform this action') {
         await signOut();

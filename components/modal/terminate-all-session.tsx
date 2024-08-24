@@ -4,25 +4,29 @@ import { Dialog, Transition } from '@headlessui/react';
 import { useState, Fragment } from 'react';
 import { useRouter } from 'next/navigation';
 import { terminateAllSession } from '@/actions/action';
-import toast, { Toaster } from 'react-hot-toast';
+import toast from 'react-hot-toast';
 import { signOut } from 'next-auth/react';
+import IconLoader from '../icon/icon-loader'; // Import IconLoader
 
 const TerminateAllSession = ({ isShow = false }) => {
   const [modal, setModal] = useState(isShow);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const router = useRouter();
 
   const handleSubmit = async () => {
+    setIsSubmitting(true);
     toast.dismiss();
-    const loadingToast = toast.loading('Waiting...');
+    const loadingToast = toast.loading('Please wait...');
     const response = await terminateAllSession();
 
     if (!response.success) {
-      toast.dismiss(loadingToast);
+      toast.dismiss();
       toast.error(response.error || 'This is an error!');
       if (response.error === 'You are not authorized to perform this action') {
         await signOut();
       }
+      setIsSubmitting(false);
       return;
     }
 
@@ -31,6 +35,7 @@ const TerminateAllSession = ({ isShow = false }) => {
 
     toast.dismiss(loadingToast);
     toast.success('Successfully terminated all sessions!');
+    setIsSubmitting(false);
   };
 
   return (
@@ -72,6 +77,7 @@ const TerminateAllSession = ({ isShow = false }) => {
                       type="button"
                       onClick={() => setModal(false)}
                       className="text-white-dark hover:text-dark"
+                      disabled={isSubmitting}
                     ></button>
                   </div>
                   <div className="p-5">
@@ -83,6 +89,7 @@ const TerminateAllSession = ({ isShow = false }) => {
                           router.push('/session/terminate');
                         }}
                         className="btn btn-outline-danger"
+                        disabled={isSubmitting}
                       >
                         No, Cancel
                       </button>
@@ -92,8 +99,16 @@ const TerminateAllSession = ({ isShow = false }) => {
                           await handleSubmit();
                         }}
                         className="btn btn-primary ltr:ml-4 rtl:mr-4"
+                        disabled={isSubmitting}
                       >
-                        Yes, Terminate All
+                        {isSubmitting ? (
+                          <>
+                            <IconLoader className="mr-2 h-5 w-5 animate-spin" />
+                            Terminating...
+                          </>
+                        ) : (
+                          'Yes, Terminate All'
+                        )}
                       </button>
                     </div>
                   </div>

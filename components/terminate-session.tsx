@@ -57,6 +57,7 @@ const TerminateSession = ({ isShow = false }) => {
     const sessionResponse: any = await fetchSessions();
 
     if (!sessionResponse.success) {
+      toast.dismiss();
       toast.error(sessionResponse?.error || 'Failed to fetch sessions');
       if (sessionResponse?.error === 'You are not authorized to perform this action') {
         await signOut();
@@ -90,7 +91,7 @@ const TerminateSession = ({ isShow = false }) => {
           <>
             {sessions.map((session: any, i: any) => (
               <div key={session.id} className="md:col-span-4 lg:col-span-3">
-                <SessionCard session={session.name} key={i} isTerminate />
+                <SessionCard session={session.name} key={i} isTerminate onTerminate={fetchSession} />
               </div>
             ))}
           </>

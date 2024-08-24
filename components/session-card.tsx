@@ -14,10 +14,10 @@ import TerminateSessions from './modal/terminate-sessions';
 interface SessionCardProps {
   session: string;
   isTerminate?: boolean;
-  handleTerminate?: (sessionName: string) => void;
+  onTerminate?: () => void;
 }
 
-const SessionCard = ({ session, handleTerminate, isTerminate }: SessionCardProps) => {
+const SessionCard = ({ session, onTerminate, isTerminate }: SessionCardProps) => {
   const [isConnected, setIsConnected] = useState(false);
   const [copied, setCopied] = useState(false);
   const [isShow, setIsShow] = useState(false);
@@ -115,7 +115,16 @@ const SessionCard = ({ session, handleTerminate, isTerminate }: SessionCardProps
       )}
       {isShow ? (
         <>
-          <TerminateSessions isShow={true} name={session} onCancel={() => setIsShow(false)} />
+          <TerminateSessions
+            isShow={true}
+            name={session}
+            onCancel={() => {
+              setIsShow(false);
+            }}
+            onTerminate={() => {
+              onTerminate && onTerminate();
+            }}
+          />
         </>
       ) : null}
     </div>

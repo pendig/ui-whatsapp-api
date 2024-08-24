@@ -6,36 +6,42 @@ import { useRouter } from 'next/navigation';
 import { terminateSession } from '@/actions/action';
 import toast, { Toaster } from 'react-hot-toast';
 import { signOut } from 'next-auth/react';
+import IconLoader from '../icon/icon-loader'; // Import IconLoader dengan benar
 
 type TerminateSessionsProps = {
   isShow: boolean;
   name: string;
   onCancel: () => void;
+  onTerminate: () => void;
 };
 
-const TerminateSessions = ({ isShow = false, name, onCancel }: TerminateSessionsProps) => {
-  console.log({isShow})
+const TerminateSessions = ({ isShow = false, name, onCancel, onTerminate }: TerminateSessionsProps) => {
   const [modal, setModal] = useState(isShow);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const router = useRouter();
 
   const handleSubmit = async (sessionName: string) => {
+    setIsSubmitting(true);
     toast.dismiss();
-    const loadingToast = toast.loading('Waiting...');
+    const loadingToast = toast.loading('Please wait...');
     const terminateSessionResponse = await terminateSession(sessionName);
 
     if (!terminateSessionResponse.success) {
-      toast.dismiss(loadingToast);
+      toast.dismiss();
       toast.error(terminateSessionResponse?.error || 'This is an error!');
       if (terminateSessionResponse?.error === 'You are not authorized to perform this action') {
         await signOut();
       }
+      setIsSubmitting(false);
       return;
     }
 
     toast.dismiss(loadingToast);
     toast.success('Successfully terminated session!');
     onCancel();
+    onTerminate();
+    setIsSubmitting(false);
   };
 
   return (
@@ -77,6 +83,7 @@ const TerminateSessions = ({ isShow = false, name, onCancel }: TerminateSessions
                       type="button"
                       onClick={() => setModal(false)}
                       className="text-white-dark hover:text-dark"
+                      disabled={isSubmitting}
                     ></button>
                   </div>
                   <div className="p-5">
@@ -88,6 +95,7 @@ const TerminateSessions = ({ isShow = false, name, onCancel }: TerminateSessions
                           onCancel();
                         }}
                         className="btn btn-outline-danger"
+                        disabled={isSubmitting}
                       >
                         No, Cancel
                       </button>
@@ -97,8 +105,16 @@ const TerminateSessions = ({ isShow = false, name, onCancel }: TerminateSessions
                           await handleSubmit(name);
                         }}
                         className="btn btn-primary ltr:ml-4 rtl:mr-4"
+                        disabled={isSubmitting}
                       >
-                        Yes, Terminate
+                        {isSubmitting ? (
+                          <>
+                            <IconLoader className="mr-2 h-5 w-5 animate-spin" />
+                            Terminating...
+                          </>
+                        ) : (
+                          'Yes, Terminate'
+                        )}
                       </button>
                     </div>
                   </div>
