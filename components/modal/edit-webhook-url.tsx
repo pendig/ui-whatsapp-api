@@ -1,7 +1,7 @@
 'use client';
 
 import { Dialog, Transition } from '@headlessui/react';
-import { useState, Fragment } from 'react';
+import { useState, Fragment, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { editWebhookUrl } from '@/actions/action';
 import toast from 'react-hot-toast';
@@ -36,6 +36,12 @@ const EditWebhookUrl: React.FC<EditWebhookUrlProps> = ({ sessionName, isOpen, on
     onClose();
     router.refresh(); // Refresh the page by pushing the current path
   };
+
+  useEffect(() => {
+    setTimeout(() => {
+      document.getElementById('newCallbackUrl')?.focus();
+    }, 500);
+  }, []);
 
   return (
     <Transition appear show={isOpen} as={Fragment}>
