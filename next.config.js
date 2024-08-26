@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  swcMinify: false,
+  swcMinify: true, // Enable SWC Minifier
   eslint: {
     ignoreDuringBuilds: true,
   },
@@ -15,7 +15,6 @@ const nextConfig = {
       },
     ],
   },
-  output: 'standalone',
 };
 
 module.exports = nextConfig;
