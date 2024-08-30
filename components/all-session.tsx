@@ -30,6 +30,8 @@ const AllSession = ({ isCreate = false }) => {
   const fetchSession = async () => {
     const sessionResponse: any = await fetchSessions();
 
+    console.log({ sessionResponse });
+
     if (!sessionResponse.success) {
       toast.dismiss();
       toast.error(sessionResponse?.error || 'Failed to fetch sessions');
@@ -47,14 +49,15 @@ const AllSession = ({ isCreate = false }) => {
   }, [session]);
 
   const handleEditWebhook = (session: Session) => {
+    console.log({ xs: session });
     setSelectedSession(session);
     setIsEditModalOpen(true);
   };
 
   return (
     <div className="grid gap-5 md:grid-cols-12">
-      <div className="md:col-span-4 lg:col-span-3">
-        <div className="card aspect-square rounded-md p-5 shadow-lg">
+      <div className="h-full md:col-span-4 lg:col-span-3">
+        <div className="card h-full rounded-md border p-5 dark:border-gray-700">
           <div className="flex h-full w-full items-center justify-center">
             <AddNewSession isCreate={isCreate} />
           </div>
@@ -64,14 +67,19 @@ const AllSession = ({ isCreate = false }) => {
         <>
           {sessions.map((session: any, i: any) => (
             <div key={session.id} className="md:col-span-4 lg:col-span-3">
-              <SessionCard session={session.name} />
-              <div className="w-full">
+              <SessionCard
+                session={session.name}
+                sessionData={session}
+                onEditWebhook={() => handleEditWebhook(session)}
+                onTerminate={fetchSession}
+              />
+              {/* <div className="w-full">
                 <div className="flex justify-center">
                   <button className="btn btn-warning btn-sm mt-0" onClick={() => handleEditWebhook(session)}>
                     Edit Webhook URL
                   </button>
                 </div>
-              </div>
+              </div> */}
             </div>
           ))}
         </>
@@ -79,6 +87,7 @@ const AllSession = ({ isCreate = false }) => {
       {isEditModalOpen && selectedSession && (
         <EditWebhookUrl
           sessionName={selectedSession.name}
+          existingWebhookUrl={selectedSession.webhook_url}
           isOpen={isEditModalOpen}
           onClose={() => setIsEditModalOpen(false)}
         />

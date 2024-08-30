@@ -43,7 +43,13 @@ const NoCacheImage: React.FC<NoCacheImageProps> = ({ src, alt }) => {
   return (
     <div>
       {!hasError ? (
-        <img src={uniqueSrc} alt={alt} onError={handleError} onLoad={handleLoad} className="max-w-full" />
+        <img
+          src={uniqueSrc}
+          alt={alt}
+          onError={handleError}
+          onLoad={handleLoad}
+          className="max-w-full border-t border-gray-200"
+        />
       ) : (
         <FadeLoader color="#36d7b7" loading={true} aria-label="Loading Spinner" data-testid="loader" />
       )}

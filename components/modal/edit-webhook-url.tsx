@@ -11,10 +11,11 @@ interface EditWebhookUrlProps {
   sessionName: string;
   isOpen: boolean;
   onClose: () => void;
+  existingWebhookUrl: string;
 }
 
-const EditWebhookUrl: React.FC<EditWebhookUrlProps> = ({ sessionName, isOpen, onClose }) => {
-  const [newCallbackUrl, setNewCallbackUrl] = useState('');
+const EditWebhookUrl: React.FC<EditWebhookUrlProps> = ({ sessionName, isOpen, onClose, existingWebhookUrl }) => {
+  const [newCallbackUrl, setNewCallbackUrl] = useState(existingWebhookUrl);
   const router = useRouter();
 
   const handleSubmit = async () => {
@@ -88,6 +89,7 @@ const EditWebhookUrl: React.FC<EditWebhookUrlProps> = ({ sessionName, isOpen, on
                         type="text"
                         placeholder="https://your-new-callback-url.com"
                         className="form-input"
+                        value={newCallbackUrl}
                         onChange={(event) => setNewCallbackUrl(event.target.value)}
                       />
                     </div>

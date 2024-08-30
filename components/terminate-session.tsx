@@ -91,7 +91,13 @@ const TerminateSession = ({ isShow = false }) => {
           <>
             {sessions.map((session: any, i: any) => (
               <div key={session.id} className="md:col-span-4 lg:col-span-3">
-                <SessionCard session={session.name} key={i} isTerminate onTerminate={fetchSession} />
+                <SessionCard
+                  session={session.name}
+                  key={i}
+                  isTerminate
+                  onTerminate={fetchSession}
+                  sessionData={session}
+                />
               </div>
             ))}
           </>

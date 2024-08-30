@@ -1,23 +1,30 @@
 import { useEffect, useState } from 'react';
-import IconTrash from './icon/icon-trash';
 import NoCacheImage from './no-cache-image';
 import { checkSessionStatus } from '@/actions/action';
 import { IoLogoWhatsapp } from 'react-icons/io';
 import { encryptText } from '@/lib/encryption';
 import Link from 'next/link';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
-import toast from 'react-hot-toast';
 import { signOut } from 'next-auth/react';
-import TerminateSession from './terminate-session';
 import TerminateSessions from './modal/terminate-sessions';
+import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react';
+import {
+  ArchiveBoxXMarkIcon,
+  ArrowTopRightOnSquareIcon,
+  EllipsisHorizontalIcon,
+  Square2StackIcon,
+  TrashIcon,
+} from '@heroicons/react/16/solid';
 
 interface SessionCardProps {
   session: string;
+  sessionData: any;
   isTerminate?: boolean;
   onTerminate?: () => void;
+  onEditWebhook?: () => void;
 }
 
-const SessionCard = ({ session, onTerminate, isTerminate }: SessionCardProps) => {
+const SessionCard = ({ session, onTerminate, isTerminate, sessionData, onEditWebhook }: SessionCardProps) => {
   const [isConnected, setIsConnected] = useState(false);
   const [copied, setCopied] = useState(false);
   const [isShow, setIsShow] = useState(false);
@@ -64,7 +71,10 @@ const SessionCard = ({ session, onTerminate, isTerminate }: SessionCardProps) =>
 
   return (
     <div className="md:col-span-4 lg:col-span-3">
-      <div className="card aspect-square rounded-md shadow-lg">
+      <div className="card aspect-square rounded-lg border border-gray-200 bg-white pb-3 dark:border-gray-700 dark:bg-gray-800">
+        <div className="truncate rounded-tl-lg rounded-tr-lg bg-[#F9FAFB] p-3 font-bold text-black dark:bg-gray-700 dark:text-white">
+          {session}
+        </div>
         <div className="relative flex h-full w-full items-center justify-center">
           <NoCacheImage
             src={`${
@@ -75,44 +85,96 @@ const SessionCard = ({ session, onTerminate, isTerminate }: SessionCardProps) =>
             alt={`QR Code image for session ${session}`}
           />
           {isConnected && (
-            <div className="absolute left-1/2 top-1/2 h-full w-full -translate-x-1/2 -translate-y-1/2 bg-white/75">
-              <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white p-3">
-                <IoLogoWhatsapp className="text-5xl text-success" />
+            <div className="absolute left-1/2 top-1/2 h-full w-full -translate-x-1/2 -translate-y-1/2 bg-white dark:bg-gray-800/75">
+              <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white p-3 dark:bg-gray-800">
+                <IoLogoWhatsapp className="text-5xl text-success dark:text-green-500" />
               </div>
             </div>
           )}
         </div>
-      </div>
-      <div className="flex flex-wrap items-center justify-between gap-3 px-3">
-        <div className="mt-3 flex-1 font-bold">{session}</div>
-        <div className="mt-3 flex items-center justify-center gap-2 text-xs">
-          <div className={`h-[10px] w-[10px] rounded-full bg-${isConnected ? 'success' : 'danger'}`}></div>
-          <span>{isConnected ? 'Connected' : 'Not Connected'}</span>
+        <div className="grid grid-cols-2 gap-3 px-3 pt-3 text-xs text-black dark:text-white">
+          <div className="flex items-center justify-start gap-2 pl-2 text-xs">
+            <div className={`h-[10px] w-[10px] rounded-full bg-${isConnected ? 'success' : 'danger'}`}></div>
+            <span>{isConnected ? 'Connected' : 'Not Connected'}</span>
+          </div>
+          <div className="flex items-center justify-end">
+            <Menu>
+              <MenuButton className="inline-flex items-center gap-2 px-2 dark:text-white">
+                <EllipsisHorizontalIcon className="size-4 fill-black dark:fill-white" />
+              </MenuButton>
+
+              <MenuItems
+                transition
+                anchor="bottom end"
+                className="z-50 w-60 origin-top-right rounded-xl border border-black/5 bg-white p-1 text-sm/6 text-black shadow-2xl transition duration-100 ease-out focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+              >
+                <MenuItem>
+                  <Link
+                    href={`/qr?code=${encryptedSession}`}
+                    target="_blank"
+                    className="group flex w-full items-center gap-2 rounded-lg px-3 py-1.5 dark:hover:bg-gray-600"
+                  >
+                    <ArrowTopRightOnSquareIcon className="size-4 fill-black/30 dark:fill-white/30" />
+                    QR Code URL
+                  </Link>
+                </MenuItem>
+                <CopyToClipboard
+                  text={`${process.env.NEXT_PUBLIC_APP_URL}/qr?code=${encryptedSession}`}
+                  onCopy={() => setCopied(true)}
+                >
+                  <MenuItem>
+                    <button className="group flex w-full items-center gap-2 rounded-lg px-3 py-1.5 dark:hover:bg-gray-600">
+                      <Square2StackIcon className="size-4 fill-black/30 dark:fill-white/30" />
+                      Copy QR Code URL
+                    </button>
+                  </MenuItem>
+                </CopyToClipboard>
+                <div className="my-1 h-px bg-black/5 dark:bg-gray-600" />
+                <MenuItem>
+                  <Link
+                    href={sessionData.webhook_url}
+                    target="_blank"
+                    className="group flex w-full items-center gap-2 rounded-lg px-3 py-1.5 dark:hover:bg-gray-600"
+                  >
+                    <ArrowTopRightOnSquareIcon className="size-4 fill-black/30 dark:fill-white/30" />
+                    Webhook URL
+                  </Link>
+                </MenuItem>
+                <CopyToClipboard text={sessionData.webhook_url} onCopy={() => setCopied(true)}>
+                  <MenuItem>
+                    <button className="group flex w-full items-center gap-2 rounded-lg px-3 py-1.5 dark:hover:bg-gray-600">
+                      <Square2StackIcon className="size-4 fill-black/30 dark:fill-white/30" />
+                      Copy Webhook URL
+                    </button>
+                  </MenuItem>
+                </CopyToClipboard>
+                <div className="my-1 h-px bg-black/5 dark:bg-gray-600" />
+                <MenuItem>
+                  <button
+                    onClick={() => {
+                      onEditWebhook && onEditWebhook();
+                    }}
+                    className="group flex w-full items-center gap-2 rounded-lg px-3 py-1.5 dark:hover:bg-gray-600"
+                  >
+                    <ArchiveBoxXMarkIcon className="size-4 fill-black/30 dark:fill-white/30" />
+                    Edit Webhook
+                  </button>
+                </MenuItem>
+                <MenuItem>
+                  <button
+                    onClick={openTerminateModal}
+                    className="group flex w-full items-center gap-2 rounded-lg px-3 py-1.5 text-red-400 dark:text-red-500 dark:hover:bg-gray-600"
+                  >
+                    <TrashIcon className="size-4 fill-red-400 dark:fill-red-500" />
+                    Terminate
+                  </button>
+                </MenuItem>
+              </MenuItems>
+            </Menu>
+          </div>
         </div>
       </div>
 
-      {isTerminate ? (
-        <div className="my-3 flex items-center justify-center">
-          <button className="btn btn-danger btn-sm" onClick={openTerminateModal}>
-            <IconTrash className="mr-2 h-4 w-4" />
-            Terminate
-          </button>
-        </div>
-      ) : (
-        <div className="my-3 flex items-center justify-center gap-3">
-          <CopyToClipboard
-            text={`${process.env.NEXT_PUBLIC_APP_URL}/qr?code=${encryptedSession}`}
-            onCopy={() => setCopied(true)}
-          >
-            <button className="btn btn-warning btn-sm mt-0 w-[100px]">{copied ? 'Copied' : 'Copy URL'}</button>
-          </CopyToClipboard>
-          <div className="flex items-center justify-center">
-            <Link href={`/qr?code=${encryptedSession}`} target="_blank" className="btn btn-sm btn-primary w-[100px]">
-              Lihat QR
-            </Link>
-          </div>
-        </div>
-      )}
       {isShow ? (
         <>
           <TerminateSessions
