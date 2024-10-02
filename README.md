@@ -1,15 +1,64 @@
+# Whatsapp UI Project
+
 This is a [Whatsapp UI](https://www.penadigital.id/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app) created with ❤️ by [Pena Digital](https://www.penadigital.id/).
 
 ## Using Docker
 
 1. [Install Docker](https://docs.docker.com/get-docker/) on your machine.
-2. Create .env file and fill required data `cp .env.local.example .env`.
-3. Delete your existing container `docker-compose down`.
-4. Build your container: `docker-compose up --build -d`.
+2. Create `.env` file and fill required data:
+   ```bash
+   cp .env.local.example .env
+   ```
+3. Delete your existing container:
+   ```bash
+   docker-compose down
+   ```
+4. Build your container:
+   ```bash
+   docker-compose up --build -d
+   ```
 
-You can view your images created with `docker images`.
+You can view your images created with:
+
+```bash
+docker images
+```
 
 This will build the project as a standalone app inside the Docker image.
+
+## Using PM2
+
+To build and deploy the project in a production environment, follow these steps:
+
+- Pull:
+
+```bash
+git pull
+```
+
+- Copy ENV and fill them based on your configuration:
+
+```bash
+cp .env.local.example .env.local
+```
+
+- Install Dependencies:
+
+```bash
+npm install
+```
+
+- Build:
+
+```bash
+npm run build
+```
+
+- Start PM2:
+
+```bash
+pm2 start ecosystem.config.js --env production
+```
 
 ## Development Server
 

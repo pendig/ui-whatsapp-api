@@ -1,12 +1,15 @@
+require('dotenv').config({ path: './.env.local' });
+
 module.exports = {
   apps: [
     {
-      name: 'ui-whatsapp-api',
+      name: 'kirimy',
       script: 'npm',
       args: 'run start',
       env: {
-        PORT: 3336
-      }
-    }
-  ]
+        NODE_ENV: 'production',
+        PORT: process.env.PORT || 3000,
+      },
+    },
+  ],
 };
