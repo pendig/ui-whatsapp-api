@@ -1,4 +1,4 @@
-'use client';;
+'use client';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import { useDispatch, useSelector } from 'react-redux';
 import Link from 'next/link';
@@ -20,9 +20,7 @@ const Sidebar = () => {
   const [currentMenu, setCurrentMenu] = useState<string>('');
   const [errorSubMenu, setErrorSubMenu] = useState(false);
   const themeConfig = useSelector((state: IRootState) => state.themeConfig);
-  const semidark = useSelector(
-    (state: IRootState) => state.themeConfig.semidark
-  );
+  const semidark = useSelector((state: IRootState) => state.themeConfig.semidark);
   const toggleMenu = (value: string) => {
     setCurrentMenu((oldValue) => {
       return oldValue === value ? '' : value;
@@ -30,15 +28,12 @@ const Sidebar = () => {
   };
 
   useEffect(() => {
-    const selector = document.querySelector(
-      '.sidebar ul a[href="' + window.location.pathname + '"]'
-    );
+    const selector = document.querySelector('.sidebar ul a[href="' + window.location.pathname + '"]');
     if (selector) {
       selector.classList.add('active');
       const ul: any = selector.closest('ul.sub-menu');
       if (ul) {
-        let ele: any =
-          ul.closest('li.menu').querySelectorAll('.nav-link') || [];
+        let ele: any = ul.closest('li.menu').querySelectorAll('.nav-link') || [];
         if (ele.length) {
           ele = ele[0];
           setTimeout(() => {
@@ -62,9 +57,7 @@ const Sidebar = () => {
       const element = allLinks[i];
       element?.classList.remove('active');
     }
-    const selector = document.querySelector(
-      '.sidebar ul a[href="' + window.location.pathname + '"]'
-    );
+    const selector = document.querySelector('.sidebar ul a[href="' + window.location.pathname + '"]');
     selector?.classList.add('active');
   };
 
@@ -113,6 +106,38 @@ const Sidebar = () => {
                         <IconMenuChat className="shrink-0 group-hover:!text-primary" />
                         <span className="text-black dark:text-[#506690] dark:group-hover:text-white-dark ltr:pl-3 rtl:pr-3">
                           {t('All Session')}
+                        </span>
+                      </div>
+                    </Link>
+                    <Link href="/chat" className="group">
+                      <div className="flex items-center">
+                        <IconMenuChat className="shrink-0 group-hover:!text-primary" />
+                        <span className="text-black dark:text-[#506690] dark:group-hover:text-white-dark ltr:pl-3 rtl:pr-3">
+                          {t('Chat')}
+                        </span>
+                      </div>
+                    </Link>
+                    <Link href="/contacts" className="group">
+                      <div className="flex items-center">
+                        <IconMenuChat className="shrink-0 group-hover:!text-primary" />
+                        <span className="text-black dark:text-[#506690] dark:group-hover:text-white-dark ltr:pl-3 rtl:pr-3">
+                          {t('Contact')}
+                        </span>
+                      </div>
+                    </Link>
+                    <Link href="/template" className="group">
+                      <div className="flex items-center">
+                        <IconMenuChat className="shrink-0 group-hover:!text-primary" />
+                        <span className="text-black dark:text-[#506690] dark:group-hover:text-white-dark ltr:pl-3 rtl:pr-3">
+                          {t('Message Template')}
+                        </span>
+                      </div>
+                    </Link>
+                    <Link href="/blasting" className="group">
+                      <div className="flex items-center">
+                        <IconMenuChat className="shrink-0 group-hover:!text-primary" />
+                        <span className="text-black dark:text-[#506690] dark:group-hover:text-white-dark ltr:pl-3 rtl:pr-3">
+                          {t('Blasting')}
                         </span>
                       </div>
                     </Link>
