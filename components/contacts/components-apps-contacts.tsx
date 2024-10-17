@@ -8,6 +8,7 @@ import IconSearch from '@/components/icon/icon-search';
 import IconTwitter from '@/components/icon/icon-twitter';
 import IconUser from '@/components/icon/icon-user';
 import IconUserPlus from '@/components/icon/icon-user-plus';
+import { FaFileExcel } from 'react-icons/fa';
 import IconX from '@/components/icon/icon-x';
 import { Transition, Dialog } from '@headlessui/react';
 import React, { Fragment, useEffect, useState } from 'react';
@@ -280,6 +281,14 @@ const ComponentsAppsContacts = () => {
     });
   };
 
+  const [importContactModal, setImportContactModal] = useState<any>(false);
+  const openImportModal = () => {
+    setImportContactModal(true);
+  };
+
+  const [contactName, setContactName] = useState<string>(''); // Tambahkan state untuk nama kontak
+  const [csvFile, setCsvFile] = useState<File | null>(null);
+
   return (
     <div>
       <div className="flex flex-wrap items-center justify-between gap-4">
@@ -287,9 +296,9 @@ const ComponentsAppsContacts = () => {
         <div className="flex w-full flex-col gap-4 sm:w-auto sm:flex-row sm:items-center sm:gap-3">
           <div className="flex gap-3">
             <div>
-              <button type="button" className="btn btn-primary" onClick={() => editUser()}>
-                <IconUserPlus className="ltr:mr-2 rtl:ml-2" />
-                Add Contact
+              <button type="button" className="btn btn-success" onClick={openImportModal}>
+                <FaFileExcel className="ltr:mr-2 rtl:ml-2" />
+                Import Contact
               </button>
             </div>
             <div>
@@ -328,6 +337,95 @@ const ComponentsAppsContacts = () => {
           </div>
         </div>
       </div>
+
+      <Transition appear show={importContactModal} as={Fragment}>
+        <Dialog
+          as="div"
+          open={importContactModal}
+          onClose={() => setImportContactModal(false)}
+          className="relative z-50"
+        >
+          <Transition.Child
+            as={Fragment}
+            enter="ease-out duration-300"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="ease-in duration-200"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+          >
+            <div className="fixed inset-0 bg-[black]/60" />
+          </Transition.Child>
+          <div className="fixed inset-0 overflow-y-auto">
+            <div className="flex min-h-full items-center justify-center px-4 py-8">
+              <Transition.Child
+                as={Fragment}
+                enter="ease-out duration-300"
+                enterFrom="opacity-0 scale-95"
+                enterTo="opacity-100 scale-100"
+                leave="ease-in duration-200"
+                leaveFrom="opacity-100 scale-100"
+                leaveTo="opacity-0 scale-95"
+              >
+                <Dialog.Panel className="panel w-full max-w-lg overflow-hidden rounded-lg border-0 p-0 text-black dark:text-white-dark">
+                  <button
+                    type="button"
+                    onClick={() => setImportContactModal(false)}
+                    className="absolute top-4 text-gray-400 outline-none hover:text-gray-800 dark:hover:text-gray-600 ltr:right-4 rtl:left-4"
+                  >
+                    <IconX />
+                  </button>
+                  <div className="bg-[#fbfbfb] py-3 text-lg font-medium dark:bg-[#121c2c] ltr:pl-5 ltr:pr-[50px] rtl:pl-[50px] rtl:pr-5">
+                    Import Contact
+                  </div>
+                  <div className="p-5">
+                    <form>
+                      <div className="mb-5">
+                        <label htmlFor="contactName">Nama Kontak</label>
+                        <input
+                          id="contactName"
+                          type="text"
+                          placeholder="Masukkan Nama Kontak"
+                          className="form-input"
+                          value={contactName} // Set nilai input
+                          onChange={(e) => setContactName(e.target.value)} // Update state saat input berubah
+                        />
+                      </div>
+                      <div className="mb-5">
+                        <label htmlFor="csvFile">File .csv</label>
+                        <input
+                          id="csvFile"
+                          type="file"
+                          accept=".csv"
+                          className="form-input"
+                          onChange={(e) => setCsvFile(e.target.files ? e.target.files[0] : null)} // Update state saat file dipilih
+                        />
+                      </div>
+                      <div className="mt-8 flex items-center justify-end">
+                        <button
+                          type="button"
+                          className="btn btn-outline-danger"
+                          onClick={() => setImportContactModal(false)}
+                        >
+                          Batal
+                        </button>
+                        <button
+                          type="button"
+                          className="btn btn-primary ltr:ml-4 rtl:mr-4"
+                          disabled={!contactName || !csvFile} // Disable tombol jika nama kontak atau file tidak diisi
+                        >
+                          Import
+                        </button>
+                      </div>
+                    </form>
+                  </div>
+                </Dialog.Panel>
+              </Transition.Child>
+            </div>
+          </div>
+        </Dialog>
+      </Transition>
+
       {value === 'list' && (
         <div className="panel mt-5 overflow-hidden border-0 p-0">
           <div className="table-responsive">

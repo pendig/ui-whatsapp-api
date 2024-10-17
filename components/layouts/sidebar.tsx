@@ -72,15 +72,13 @@ const Sidebar = () => {
           <div className="flex items-center justify-between px-4 py-3">
             <Link href="/" className="main-logo flex shrink-0 items-center">
               <Image
-                className="ml-[5px] w-8 flex-none"
-                src="/assets/images/logo.svg"
+                className="ml-[5px] flex-none"
+                src="/assets/images/logo-kirimy.png"
                 alt="logo"
-                width={32}
-                height={28}
+                width={140}
+                height={33}
               />
-              <span className="align-middle text-2xl font-semibold dark:text-white-light lg:inline ltr:ml-1.5 rtl:mr-1.5">
-                PENDIG
-              </span>
+              
             </Link>
 
             <button
