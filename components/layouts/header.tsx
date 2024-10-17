@@ -12,6 +12,8 @@ import IconLaptop from '@/components/icon/icon-laptop';
 import IconLogout from '@/components/icon/icon-logout';
 import { usePathname } from 'next/navigation';
 import { signIn, signOut, useSession } from 'next-auth/react';
+import Image from 'next/image';
+import SessionSelect from './session-select';
 
 const Header = () => {
   const pathname = usePathname();
@@ -59,10 +61,13 @@ const Header = () => {
             <div className="relative flex w-full items-center bg-white px-5 py-2.5 dark:bg-black">
               <div className="horizontal-logo flex items-center justify-between lg:hidden ltr:mr-2 rtl:ml-2">
                 <Link href="/" className="main-logo flex shrink-0 items-center">
-                  <img className="inline w-8 ltr:-ml-1 rtl:-mr-1" src="/assets/images/logo.svg" alt="logo" />
-                  <span className="hidden align-middle text-2xl  font-semibold  transition-all duration-300 dark:text-white-light md:inline ltr:ml-1.5 rtl:mr-1.5">
-                    WAAPI
-                  </span>
+                  <Image
+                    className="ml-[5px] flex-none"
+                    src="/assets/images/logo-kirimy.png"
+                    alt="logo"
+                    width={100}
+                    height={20}
+                  />
                 </Link>
                 <button
                   type="button"
@@ -74,6 +79,9 @@ const Header = () => {
               </div>
               <div className="flex items-center space-x-1.5 dark:text-[#d0d2d6] sm:flex-1 lg:space-x-2 ltr:ml-auto ltr:sm:ml-0 rtl:mr-auto rtl:space-x-reverse sm:rtl:mr-0">
                 <div className="sm:ltr:mr-auto sm:rtl:ml-auto"></div>
+                <div>
+                  <SessionSelect />
+                </div>
                 <div>
                   {themeConfig.theme === 'light' ? (
                     <button
@@ -126,7 +134,7 @@ const Header = () => {
                             alt="userProfile"
                           />
                         ) : (
-                          <div className="w-[36px] h-[36px] bg-gray-100 rounded-full"></div>
+                          <div className="h-[36px] w-[36px] rounded-full bg-gray-100"></div>
                         )}
                       </>
                     }
@@ -141,7 +149,7 @@ const Header = () => {
                               alt="userProfile"
                             />
                           ) : (
-                            <div className="w-[36px] h-[36px] bg-gray-100 rounded-md"></div>
+                            <div className="h-[36px] w-[36px] rounded-md bg-gray-100"></div>
                           )}
                           <div className="truncate ltr:pl-4 rtl:pr-4">
                             <h4 className="text-base">{session.user?.name}</h4>

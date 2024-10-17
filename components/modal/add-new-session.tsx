@@ -151,9 +151,7 @@ const AddNewSession = ({ isCreate = false }) => {
                         className="btn btn-primary ltr:ml-4 rtl:mr-4"
                         disabled={isSubmitting} // Disable tombol save saat submit
                       >
-                        {isSubmitting ? (
-                          <IconLoader className="animate-spin h-5 w-5 mr-3" />
-                        ) : null} Save
+                        {isSubmitting ? <IconLoader className="mr-3 h-5 w-5 animate-spin" /> : null} Save
                       </button>
                     </div>
                   </div>

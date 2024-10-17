@@ -30,8 +30,6 @@ const AllSession = ({ isCreate = false }) => {
   const fetchSession = async () => {
     const sessionResponse: any = await fetchSessions();
 
-    console.log({ sessionResponse });
-
     if (!sessionResponse.success) {
       toast.dismiss();
       toast.error(sessionResponse?.error || 'Failed to fetch sessions');
@@ -49,7 +47,6 @@ const AllSession = ({ isCreate = false }) => {
   }, [session]);
 
   const handleEditWebhook = (session: Session) => {
-    console.log({ xs: session });
     setSelectedSession(session);
     setIsEditModalOpen(true);
   };

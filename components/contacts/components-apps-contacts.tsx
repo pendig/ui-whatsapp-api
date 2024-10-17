@@ -10,9 +10,12 @@ import IconUser from '@/components/icon/icon-user';
 import IconUserPlus from '@/components/icon/icon-user-plus';
 import { FaFileExcel } from 'react-icons/fa';
 import IconX from '@/components/icon/icon-x';
-import { Transition, Dialog } from '@headlessui/react';
+import { Transition, Dialog, TransitionChild } from '@headlessui/react';
 import React, { Fragment, useEffect, useState } from 'react';
 import Swal from 'sweetalert2';
+import Link from 'next/link';
+import { uploadContact } from '@/actions/action';
+import axios from 'axios';
 
 const ComponentsAppsContacts = () => {
   const [addContactModal, setAddContactModal] = useState<any>(false);
@@ -286,8 +289,37 @@ const ComponentsAppsContacts = () => {
     setImportContactModal(true);
   };
 
-  const [contactName, setContactName] = useState<string>(''); // Tambahkan state untuk nama kontak
+  const [loading, setLoading] = useState<boolean>(false);
+  const [contactName, setContactName] = useState<string>('');
   const [csvFile, setCsvFile] = useState<File | null>(null);
+
+  const handleImport = async () => {
+    setLoading(true);
+    if (csvFile && contactName) {
+      const sessionId = '1410';
+      const formData = new FormData();
+      formData.append('file', csvFile);
+      formData.append('name', contactName);
+      formData.append('session_id', sessionId);
+      try {
+        await axios.post(`${process.env.NEXT_PUBLIC_N8N_API_ENDPOINT}/contacts/upload`, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+        showMessage('Contacts imported successfully.');
+      } catch (error) {
+        showMessage('Error importing contacts.', 'error');
+      } finally {
+        setLoading(false);
+        setImportContactModal(false);
+        setContactName('');
+        setCsvFile(null);
+      }
+    } else {
+      showMessage('Please provide a name and select a CSV file.', 'error');
+    }
+  };
 
   return (
     <div>
@@ -338,15 +370,9 @@ const ComponentsAppsContacts = () => {
         </div>
       </div>
 
-      <Transition appear show={importContactModal} as={Fragment}>
-        <Dialog
-          as="div"
-          open={importContactModal}
-          onClose={() => setImportContactModal(false)}
-          className="relative z-50"
-        >
-          <Transition.Child
-            as={Fragment}
+      <Transition show={importContactModal} as={Fragment}>
+        <Dialog as="div" open={importContactModal} onClose={() => {}} className="relative z-50">
+          <TransitionChild
             enter="ease-out duration-300"
             enterFrom="opacity-0"
             enterTo="opacity-100"
@@ -355,11 +381,11 @@ const ComponentsAppsContacts = () => {
             leaveTo="opacity-0"
           >
             <div className="fixed inset-0 bg-[black]/60" />
-          </Transition.Child>
+          </TransitionChild>
+
           <div className="fixed inset-0 overflow-y-auto">
             <div className="flex min-h-full items-center justify-center px-4 py-8">
-              <Transition.Child
-                as={Fragment}
+              <TransitionChild
                 enter="ease-out duration-300"
                 enterFrom="opacity-0 scale-95"
                 enterTo="opacity-100 scale-100"
@@ -379,7 +405,12 @@ const ComponentsAppsContacts = () => {
                     Import Contact
                   </div>
                   <div className="p-5">
-                    <form>
+                    <form
+                      onSubmit={(e) => {
+                        e.preventDefault();
+                        handleImport();
+                      }}
+                    >
                       <div className="mb-5">
                         <label htmlFor="contactName">Nama Kontak</label>
                         <input
@@ -387,8 +418,8 @@ const ComponentsAppsContacts = () => {
                           type="text"
                           placeholder="Masukkan Nama Kontak"
                           className="form-input"
-                          value={contactName} // Set nilai input
-                          onChange={(e) => setContactName(e.target.value)} // Update state saat input berubah
+                          value={contactName}
+                          onChange={(e) => setContactName(e.target.value)}
                         />
                       </div>
                       <div className="mb-5">
@@ -398,7 +429,7 @@ const ComponentsAppsContacts = () => {
                           type="file"
                           accept=".csv"
                           className="form-input"
-                          onChange={(e) => setCsvFile(e.target.files ? e.target.files[0] : null)} // Update state saat file dipilih
+                          onChange={(e) => setCsvFile(e.target.files ? e.target.files[0] : null)}
                         />
                       </div>
                       <div className="mt-8 flex items-center justify-end">
@@ -410,17 +441,22 @@ const ComponentsAppsContacts = () => {
                           Batal
                         </button>
                         <button
-                          type="button"
+                          type="submit"
                           className="btn btn-primary ltr:ml-4 rtl:mr-4"
-                          disabled={!contactName || !csvFile} // Disable tombol jika nama kontak atau file tidak diisi
+                          disabled={!contactName || !csvFile || loading}
                         >
-                          Import
+                          {loading ? 'Loading...' : 'Import'}
                         </button>
+                      </div>
+                      <div className="mt-4 text-center">
+                        <Link href="/template/upload-contact.csv" download className="text-sm text-blue-600 underline">
+                          Download CSV Template
+                        </Link>
                       </div>
                     </form>
                   </div>
                 </Dialog.Panel>
-              </Transition.Child>
+              </TransitionChild>
             </div>
           </div>
         </Dialog>

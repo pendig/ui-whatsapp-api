@@ -125,3 +125,25 @@ export const fetchSessions = async () => {
     return handleForbiddenError(error);
   }
 };
+
+export const uploadContact = async (file: File, name: string, sessionId: string) => {
+  const session: any = await getServerSession(authOptions);
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('name', name);
+  formData.append('session_id', sessionId);
+
+  try {
+    const endpoint = `${process.env.NEXT_PUBLIC_API_ENDPOINT}/contacts/upload`;
+    const response = await axios.post(endpoint, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        Authorization: 'Bearer ' + session?.accessToken,
+      },
+    });
+    return response.data;
+  } catch (error: any) {
+    return handleForbiddenError(error);
+  }
+};
+
