@@ -8,10 +8,14 @@ import { useState, useEffect } from 'react';
 import IconCaretsDown from '@/components/icon/icon-carets-down';
 import IconMinus from '@/components/icon/icon-minus';
 import IconMenuChat from '@/components/icon/menu/icon-menu-chat';
-import IconMenuMailbox from '@/components/icon/menu/icon-menu-mailbox';
 import { usePathname } from 'next/navigation';
 import { getTranslation } from '@/i18n';
 import Image from 'next/image';
+import { CiViewList } from 'react-icons/ci';
+import { LuContact } from 'react-icons/lu';
+import { PiFileTextLight } from 'react-icons/pi';
+import { BsSendCheck } from 'react-icons/bs';
+import { LuSearchCheck } from 'react-icons/lu';
 
 const Sidebar = () => {
   const dispatch = useDispatch();
@@ -78,7 +82,6 @@ const Sidebar = () => {
                 width={140}
                 height={33}
               />
-              
             </Link>
 
             <button
@@ -101,7 +104,7 @@ const Sidebar = () => {
                   <li className="nav-item">
                     <Link href="/session" className="group">
                       <div className="flex items-center">
-                        <IconMenuChat className="shrink-0 group-hover:!text-primary" />
+                        <CiViewList className="shrink-0 group-hover:!text-primary" />
                         <span className="text-black dark:text-[#506690] dark:group-hover:text-white-dark ltr:pl-3 rtl:pr-3">
                           {t('All Session')}
                         </span>
@@ -117,7 +120,7 @@ const Sidebar = () => {
                     </Link>
                     <Link href="/contacts" className="group">
                       <div className="flex items-center">
-                        <IconMenuChat className="shrink-0 group-hover:!text-primary" />
+                        <LuContact className="shrink-0 group-hover:!text-primary" />
                         <span className="text-black dark:text-[#506690] dark:group-hover:text-white-dark ltr:pl-3 rtl:pr-3">
                           {t('Contact')}
                         </span>
@@ -125,7 +128,7 @@ const Sidebar = () => {
                     </Link>
                     <Link href="/template" className="group">
                       <div className="flex items-center">
-                        <IconMenuChat className="shrink-0 group-hover:!text-primary" />
+                        <PiFileTextLight className="shrink-0 group-hover:!text-primary" />
                         <span className="text-black dark:text-[#506690] dark:group-hover:text-white-dark ltr:pl-3 rtl:pr-3">
                           {t('Message Template')}
                         </span>
@@ -133,9 +136,17 @@ const Sidebar = () => {
                     </Link>
                     <Link href="/blasting" className="group">
                       <div className="flex items-center">
-                        <IconMenuChat className="shrink-0 group-hover:!text-primary" />
+                        <BsSendCheck className="shrink-0 group-hover:!text-primary" />
                         <span className="text-black dark:text-[#506690] dark:group-hover:text-white-dark ltr:pl-3 rtl:pr-3">
                           {t('Blasting')}
+                        </span>
+                      </div>
+                    </Link>
+                    <Link href="/lookup" className="group">
+                      <div className="flex items-center">
+                        <LuSearchCheck className="shrink-0 group-hover:!text-primary" />
+                        <span className="text-black dark:text-[#506690] dark:group-hover:text-white-dark ltr:pl-3 rtl:pr-3">
+                          {t('Number Lookup')}
                         </span>
                       </div>
                     </Link>
